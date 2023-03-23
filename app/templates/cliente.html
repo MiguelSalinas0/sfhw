@@ -1,0 +1,254 @@
+{% extends "layout.html" %} {% block titulo %}Página de clientes{% endblock %}
+{% block body %}
+<h1 class="center">Ingreso de clientes nuevos</h1>
+
+<div class=".container border back">
+    <div class=".container-md justify-content-around align-items-center">
+        <form action="cliente" method="POST">
+            <div class="justify-content-center row my-2">
+                <label for="buscar" class="col-2 col-form-label">Buscar</label>
+                <div class="col-6">
+                    <input type="number" name="buscar" id="buscar" class="form-control" required />
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<div class="container">
+    <form action="grabarCliente" method="POST">
+        <div class="form-group col-md-4 mb-3">
+            <label for="lien" class="col-12 col-form-label"># Cliente</label>
+            <div class="col-12">
+                <input type="text" class="form-control" name="clien" id="clien" readonly="true"
+                    value="{{ session['cliente']['CLIEN'] }}" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="nombre" class="col-2 col-form-label">Nombre</label>
+                <div class="col-10">
+                    <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre"
+                        value="{{ session['cliente']['NOMBRE'] }}" required />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="apellido" class="col-2 col-form-label">Apellido</label>
+                <div class="col-10">
+                    <input type="text" class="form-control" name="apellido" id="apellido"
+                        placeholder="Ingrese el apellido" value="{{ session['cliente']['APELLIDO'] }}" required />
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <div class="form-group col-md-3">
+                <label for="tipodocumento" class="col-12 col-form-label">Tipo documento</label>
+                <div class="col-12">
+                    <select name="tipodoc" id="tipodoc" class="form-control" value="{{ session['cliente']['TDOC'] }}">
+                        {% for tipodoc in tipodocs %} {% if session['cliente']['TDOC'] ==
+                        tipodoc.idtipo %}
+                        <option value="{{ tipodoc.idtipo }}" selected>
+                            {{ tipodoc.nombre }}
+                        </option>
+                        {% else %}
+                        <option value="{{ tipodoc.idtipo }}">{{ tipodoc.nombre }}</option>
+                        {% endif %} {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="documento" class="col-12 col-form-label">N° documento</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="documento" id="documento"
+                        placeholder="N° de documento" value="{{ session['cliente']['DNI'] }}" required />
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="ctrib" class="col-12 col-form-label">Tipo IVA</label>
+                <div class="col-12">
+                    <select name="ctrib" id="ctrib" class="form-control" value="{{ session['cliente']['CTRIB'] }}">
+                        {% for tipocontrib in tipocontribs %} {% if
+                        session['cliente']['CTRIB'] == tipocontrib.idtipo %}
+                        <option value="{{ tipocontrib.idtipo }}" selected>
+                            {{ tipocontrib.nombre }}
+                        </option>
+                        {% else %}
+                        <option value="{{ tipocontrib.idtipo }}">
+                            {{ tipocontrib.nombre }}
+                        </option>
+                        {% endif %} {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="catego" class="col-12 col-form-label">Categoría</label>
+                <div class="col-12">
+                    <select name="catego" id="catego" class="form-control" value="{{ session['cliente']['CATEGO'] }}">
+                        {% for categoria in categorias %} {% if session['cliente']['CATEGO']
+                        == categoria.catego %}
+                        <option value="{{ categoria.catego }}" selected>
+                            {{ categoria.nombre }}
+                        </option>
+                        {% else %}
+                        <option value="{{ categoria.catego }}">
+                            {{ categoria.nombre }}
+                        </option>
+                        {% endif %} {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="domicilio1" class="col-12 col-form-label">Domicilio 1</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="domicilio1" id="domicilio1" placeholder="Domicilio 1"
+                        value="{{ session['cliente']['DOMICILIO1'] }}" />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="domicilio2" class="col-12 col-form-label">Domicilio 2</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="domicilio2" id="domicilio2" placeholder="Domicilio 2"
+                        value="{{ session['cliente']['DOMICILIO2'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="calle1" class="col-12 col-form-label">Calle 1</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="calle1" id="domicilio1"
+                        placeholder="Detalle adicional de la direccion" value="{{ session['cliente']['CALLE1'] }}" />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="calle2" class="col-12 col-form-label">Calle 2</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="calle2" id="domicilio2"
+                        placeholder="Detalle adicional de la direccion" value="{{ session['cliente']['CALLE2'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-3">
+                <label for="localidad" class="col-12 col-form-label">Localidad</label>
+                <div class="col-12">
+                    <select name="codloc" id="codloc" class="form-control" value="{{ session['cliente']['CODLOC'] }}">
+                        {% for localidad in localidades %} {% if
+                        session['cliente']['CODLOC'] == localidad.codloc %}
+                        <option value="{{ localidad.codloc }}" selected>
+                            {{ localidad.nombre }}
+                        </option>
+                        {% else %}
+                        <option value="{{ localidad.codloc }}">
+                            {{ localidad.nombre }}
+                        </option>
+                        {% endif %} {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="estadociv" class="col-12 col-form-label">Est. civil</label>
+                <div class="col-12">
+                    <select name="estadociv" id="estadociv" class="form-control"
+                        value="{{ session['cliente']['ESTADOCIV'] }}">
+                        {% for estadocivil in estadosciviles %} {% if
+                        session['cliente']['ESTADOCIV'] == estadocivil.idtipo %}
+                        <option value="{{ estadocivil.idtipo }}" selected>
+                            {{ estadocivil.nombre }}
+                        </option>
+                        {% else %}
+                        <option value="{{ estadocivil.idtipo }}">
+                            {{ estadocivil.nombre }}
+                        </option>
+                        {% endif %} {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="email" class="col-12 col-form-label">Correo elec.</label>
+                <div class="col-12">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Correo electrónico"
+                        value="{{ session['cliente']['EMAIL'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group col-md-2">
+                <label for="codarea1">Cod. area 1</label>
+                <input type="text" class="form-control" name="codarea" id="codarea"
+                    placeholder="Ingrese el código de area" value="{{ session['cliente']['CODAREA'] }}" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="telefono">N° de teléfono 1</label>
+                <input type="text" class="form-control" name="telefono" id="telefono"
+                    placeholder="Ingrese el N° de teléfono" value="{{ session['cliente']['TELEFONO'] }}" />
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="codarea2">Cod. area 2</label>
+                <input type="text" class="form-control" name="codarea1" id="codarea1"
+                    placeholder="Ingrese el código de area" value="{{ session['cliente']['CODAREA1'] }}" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="ntelefono1">N° de teléfono 2</label>
+                <input type="text" class="form-control" name="telefono1" id="telefono1"
+                    placeholder="Ingrese el N° de teléfono" value="{{ session['cliente']['TELEFONO1'] }}" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <legend class="col-form-label col-sm-2 pt-0">Sexo</legend>
+            <div class="col-sm-4">
+                <div class="form-check">
+                    {% if session['cliente']['SEXO'] == '02' %}
+                    <input class="form-check-input" type="radio" name="sexoFem" id="sexo" value="02" checked />
+                    {% else %}
+                    <input class="form-check-input" type="radio" name="sexoFem" id="sexo" value="02" />
+                    {% endif %}
+                    <label class="form-check-label" for="sexo"> Femenino </label>
+                </div>
+                <div class="form-check">
+                    {% if session['cliente']['SEXO'] == '01' %}
+                    <input class="form-check-input" type="radio" name="sexoMasc" id="sexo" value="01" checked />
+                    {% else %}
+                    <input class="form-check-input" type="radio" name="sexoMasc" id="sexo" value="01" />
+                    {% endif %}
+                    <label class="form-check-label" for="sexoMasc"> Masculino </label>
+                </div>
+            </div>
+            <div class="form-group col-sm-4">
+                <label for="fnacim">Fecha nacimiento</label>
+                <input type="date" class="form-control" name="fnacim" id="fnacim"
+                    placeholder="Ingrese fecha de nacimiento" value="{{ session['cliente']['FNACIM'] }}" />
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group col-md-2">
+                <label for="obs">Observaciones</label>
+                <textarea name="obs" id="obs" cols="150" rows="5"> {{ session['cliente']['OBS'] }}</textarea>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="offset-sm-1 col-sm-2 my-2">
+                <button type="submit" class="btn btn-primary">Grabar cambios</button>
+            </div>
+            <div class="offset-sm-1 col-sm-2 my-2">
+                <a class="btn btn-warning" href="{{ url_for('nuevoproducto') }}" role="button">Nuevo crédito</a>
+            </div>
+            <div class="offset-sm-1 col-sm-2 my-2">
+                <a class="btn btn-success" href="estadocuenta" role="button">Estado de cuenta</a>
+            </div>
+            <div class="offset-sm-1 col-sm-2 my-2">
+                <a class="btn btn-danger" href="documentacion" role="button">Documentacion</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

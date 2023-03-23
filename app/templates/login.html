@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% block titulo %} {{ dato.titulo }} {% endblock %}
+{% block body %}
+
+<div class="container">
+  
+  <div class="row">
+    <div class="col-sm"></div>
+
+    <div class="col-sm">
+      <div class="mx-auto">
+        <img src="./static/img/logo-oficial-2021-700x214.png" class="img-fluid" alt="logo San Francisco Hogar">
+      </div>
+      <form action="login" method="POST">
+            <div class="col-sm-12">
+              <label for="usuario" class="form-label">Usuario</label>
+              <input type="text" class="form-control" id="usuario" name="usuario" aria-describedby="usuarioHelp">
+              <div id="usuarioHelp" class="form-text">Ingrese su nombre de usuario.</div>
+            </div>
+            <div class="col-sm-12">
+              <label for="clave" class="form-label">Clave</label>
+              <input type="password" class="form-control" id="clave" name="clave" aria-describedby="claveHelp">
+              <div id="claveHelp" class="form-text">Ingrese su clave.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+      </form>
+    </div>
+
+    <div class="col-sm"></div>
+  </div>
+</div>  
+
+{% endblock %}
