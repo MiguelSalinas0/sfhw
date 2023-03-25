@@ -8,7 +8,7 @@
             <div class="justify-content-center row my-2">
                 <label for="buscar" class="col-2 col-form-label">Buscar</label>
                 <div class="col-6">
-                    <input type="number" name="buscar" id="buscar" class="form-control" required />
+                    <input type="text" name="buscar" id="buscar" class="form-control" maxlength="8" required />
                 </div>
                 <div class="col-2">
                     <button type="submit" class="btn btn-primary">Buscar</button>
@@ -180,7 +180,7 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-3">
                 <label for="codarea1">Cod. area 1</label>
                 <input type="text" class="form-control" name="codarea" id="codarea"
                     placeholder="Ingrese el código de area" value="{{ session['cliente']['CODAREA'] }}" />
@@ -203,9 +203,9 @@
             </div>
         </div>
         <div class="mb-3 row">
-            <legend class="col-form-label col-sm-2 pt-0" style= "position: relative; margin-top:20px;">Sexo</legend>
-            <div class="col-sm-4">
-                <select name="sexo" style= "position: relative; margin-top:20px; width: 200px; height: 30px; background-color: #f1f1f1; color: #000">
+            <div class="col-sm-6">
+                <legend class="col-form-label col-sm-2 pt-0">Sexo</legend>
+                <select name="sexo" class="form-control">
                     <option value="02" {% if session['cliente']['SEXO'] == '02' %}selected{% endif %}>Femenino</option>
                     <option value="01" {% if session['cliente']['SEXO'] == '01' %}selected{% endif %}>Masculino</option>
                 </select>
@@ -228,7 +228,7 @@
                 </div>
                 -->
             </div>
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-6">
                 <label for="fnacim">Fecha nacimiento</label>
                 <input type="date" class="form-control" name="fnacim" id="fnacim"
                     placeholder="Ingrese fecha de nacimiento" value="{{ session['cliente']['FNACIM'] }}" />

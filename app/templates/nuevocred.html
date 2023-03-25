@@ -12,7 +12,6 @@ Nuevo crédito
             <h2>Nuevo crédito</h2>
             <h3>{{ session['cliente']['CLIEN'] }}: {{session['cliente']['APELLIDO']}}, {{ session['cliente']['NOMBRE'] }}</h3>
             <p>Ingrese los datos para la nueva solicitud de crédito</p>
-            <button class="btn btn-outline-primary" type="button">Example button</button>
         </div>
     </div>
     
@@ -46,10 +45,10 @@ Nuevo crédito
         </table>
     </div>
     <hr>    
-    <div class=".container border back">
+    <div class="container border back">
         <div class=".container-md justify-content-around align-items-center">
-            <form action="" method="POST">
-                <div class="justify-content-center row my-2">
+            <form action="solicitudCred" method="POST">
+                <div class="justify-content-center align-items-center row my-2">
                     <label for="sucursal" class="col-1 col-form-label">Sucursal</label>
                     <div class="col-4">
                         <select name="sucursal" id="sucursal" class="form-control" value="{{ session['cliente']['sucursal'] }}">
@@ -62,20 +61,22 @@ Nuevo crédito
                             {% endfor %}
                         </select>
                     </div>    
-                    <div class="form-check col-sm-4">
+                    <div class="form-check col-sm-3">
                         <input class="form-check-input col-2" type="checkbox" value="" id="flexCheckDefault" name="documentacion">
                         <label class="form-check-label col-10" for="flexCheckDefault">
                             Presentó toda la documentación
                         </label>
                     </div>
-                        
-                    <div class="col-sm-4">    
-                        <label for="vendedor" class="col-4 col-form-label">Vendedor</label>
+                </div>
+                <div class="justify-content-center align-items-center row my-2 pt-4">
+                    <label for="vendedor" class="col-1 col-form-label">Vendedor</label>
+                    <div class="col-4">
                         <input type="text" name="vendedor" id="vendedor" class="form-control">
                     </div>
-                    <div class="offset-sm-2 col-sm-6 my-2">
-                        <button type="submit" class="btn btn-primary">Generar Crédito</button>
-                    </div>
+                </div>
+                <div class="d-flex justify-content-center pt-4 pb-4">
+                    <button type="submit" class="btn btn-primary">Generar Crédito</button>
+                </div>
             </form>
         </div>
     </div>
