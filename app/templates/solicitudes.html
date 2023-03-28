@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% block titulo %}
+Solicitudes de Crédito
+{% endblock %}
+
+{% block body %}
+
+<div class="pt-4">
+    <table id="tab2" class="table table-light table-striped">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Sucursal</th>
+                <th>Crédito</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud in solicitudes %}
+                <tr>
+                    <td>{{solicitud.cliente}}</td>
+                    <td>{{solicitud.sucursal}}</td>
+                    <td>{{solicitud.credito}}</td>
+                    <td>
+                        <a href="{{ url_for('datos', id = solicitud.id) }}" class="btn btn-success">Detalles</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -150,14 +150,14 @@ def grabarCliente():
         newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if ((datosCliente['clien'] == '') or (datosCliente['clien'] == None)):
             datosCliente = json.dumps(datosCliente, indent=4)
-            respuesta = requests.post(url, json=datosCliente, headers=newHeaders)
+            respuesta = requests.post(url, data=datosCliente, headers=newHeaders)
             if respuesta.status_code == 201:
                 flash(f"Nuevo cliente grabado", "info")
             else:
                 flash(f"Error insertando datos del cliente: {respuesta.status_code}", "error")
         else:
             datosCliente = json.dumps(datosCliente, indent=4)
-            respuesta = requests.put(url, json=datosCliente, headers=newHeaders)
+            respuesta = requests.put(url, data=datosCliente, headers=newHeaders)
             if respuesta.status_code == 201:
                 flash(f"Datos del cliente actualizados", "info")
             else:
@@ -201,7 +201,7 @@ def solicitudCred():
     if request.method=="POST":
         cred = {}
         Dcliente = []
-        newItems = {'idcliente': session.get("cliente")["CLIEN"], 'sucursal': request.form['sucursal']}
+        newItems = {'idcliente': session.get("cliente")["CLIEN"], 'sucursal': request.form['sucursal'], 'idvendedor': session.get("usuario")}
         Dcliente.append(newItems)
         cred["cliente"] = Dcliente
         cred["items_cred"] = session.get("items")
@@ -209,8 +209,8 @@ def solicitudCred():
         print(cred)
         url = session['urlWS'] + 'solcred'
         newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        respuesta = requests.put(url, json=cred, headers=newHeaders)
-        if respuesta.status_code == 201:
+        respuesta = requests.post(url, data=cred, headers=newHeaders)
+        if respuesta.status_code == 200:
             flash(f"Nuevo crédito grabado", "info")
         else:    
             flash(f"Error insertando datos de la solicitud de crédito: {respuesta.status_code}", "error")
@@ -232,6 +232,21 @@ def eliminar(i):
         else:
             indice = indice + 1
     return render_template('/itemcred.html', items=session.get("items"))
+
+
+@app.route('/solicitudes')
+def solicitudes():
+    solicitudes = []
+    new1 = {'id': 3, 'cliente': 'miguel', 'sucursal': 'pocito', 'credito': 50000}
+    solicitudes.append(new1)
+    return render_template('/solicitudes.html', solicitudes=solicitudes)
+
+
+@app.route('/datosCredito/<id>')
+def datos(id):
+    cliente, error = get_cliente(id)
+    if error == None:
+        return render_template('/datosCred.html', cliente=cliente)
 
 
 @app.route('/estadocuenta')
