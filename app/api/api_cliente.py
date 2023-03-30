@@ -88,3 +88,14 @@ def get_articulo(idArticulo):
     else:
         error = respuesta.status_code
         return {}, error
+
+
+def get_creditos():
+    error = None
+    url = session['urlWS'] + 'solcred/' + '0'
+    respuesta = requests.get(url)
+    if respuesta.status_code == 200:
+        return respuesta.json(), error
+    else:
+        error = respuesta.status_code
+        return {}, error

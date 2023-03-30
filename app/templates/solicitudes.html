@@ -5,24 +5,28 @@ Solicitudes de Crédito
 
 {% block body %}
 
-<div class="pt-4">
+<div class="pt-4 pb-5">
     <table id="tab2" class="table table-light table-striped">
         <thead>
             <tr>
                 <th>Cliente</th>
+                <th>Vendedor</th>
                 <th>Sucursal</th>
-                <th>Crédito</th>
+                <th>Total de Crédito</th>
+                <th>Fecha</th>
                 <th>Acción</th>
             </tr>
         </thead>
         <tbody>
             {% for solicitud in solicitudes %}
                 <tr>
-                    <td>{{solicitud.cliente}}</td>
+                    <td>{{solicitud.idcliente}}</td>
+                    <td>{{solicitud.idvendedor}}</td>
                     <td>{{solicitud.sucursal}}</td>
-                    <td>{{solicitud.credito}}</td>
+                    <td>$ {{solicitud.total}}</td>
+                    <td>{{solicitud.FECHA}}</td>
                     <td>
-                        <a href="{{ url_for('datos', id = solicitud.id) }}" class="btn btn-success">Detalles</a>
+                        <a href="{{ url_for('datos', id = solicitud.idcliente) }}" class="btn btn-success">Detalles</a>
                     </td>
                 </tr>
             {% endfor %}

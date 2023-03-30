@@ -5,6 +5,81 @@ Solicitudes de Crédito
 
 {% block body %}
 
-{{cliente}}
+<h3 class="pt-4 pb-4">Datos Cliente</h3>
+
+<div class="mb-3 row">
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Nombre</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['NOMBRE']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Apellido</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['APELLIDO']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Sexo</span>
+            {% if cliente['SEXO'] == '01' %}
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="Masculino">
+            {% else %}
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="Femenino">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="mb-3 row">
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Teléfono</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['CODAREA']}}{{cliente['TELEFONO']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Domicilio</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['DOMICILIO1']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Correo Electrónico</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['EMAIL']}}">
+        </div>
+    </div>
+</div>
+
+<div class="mb-3 row">
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">DNI</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['DNI']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Trabajo</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['TRABAJO']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Fecha de Nacimiento</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['FNACIM']}}">
+        </div>
+    </div>
+</div>
+
+<h3 class="pt-4 pb-4">Datos del Crédito</h3>
+
+<h3 class="pt-4 pb-4">Documentación</h3>
+
+<h3 class="pt-4 pb-4">Datos Crediticios</h3>
+
+<h3 class="pt-4 pb-4">Historial Crediticio</h3>
 
 {% endblock %}

@@ -71,7 +71,7 @@ def login():
         return render_template('login.html')
 
 
-@app.route('/logout.html')
+@app.route('/logout')
 def logout():
     if "usuario" in session:
         usuario = session["usuario"]
@@ -236,10 +236,9 @@ def eliminar(i):
 
 @app.route('/solicitudes')
 def solicitudes():
-    solicitudes = []
-    new1 = {'id': 3, 'cliente': 'miguel', 'sucursal': 'pocito', 'credito': 50000}
-    solicitudes.append(new1)
-    return render_template('/solicitudes.html', solicitudes=solicitudes)
+    creditos, error = get_creditos()
+    if error == None:
+        return render_template('/solicitudes.html', solicitudes=creditos)
 
 
 @app.route('/datosCredito/<id>')
@@ -257,11 +256,6 @@ def estadoCuenta():
 @app.route('/documentacion')
 def documentacion():
     return render_template('/documentacion.html')
-
-
-@app.route('/estsolicitud')
-def estSolicitud():
-    return render_template('/estsolicitud.html')
 
 
 def query_string():
