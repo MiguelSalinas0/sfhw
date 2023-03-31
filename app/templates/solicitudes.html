@@ -20,9 +20,9 @@ Solicitudes de Crédito
         <tbody>
             {% for solicitud in solicitudes %}
                 <tr>
-                    <td>{{solicitud.idcliente}}</td>
+                    <td>{{solicitud.idcliente}} - {{solicitud.nomcli}}</td>
                     <td>{{solicitud.idvendedor}}</td>
-                    <td>{{solicitud.sucursal}}</td>
+                    <td>{{solicitud.idsucursal}} - {{solicitud.sucursal}}</td>
                     <td>$ {{solicitud.total}}</td>
                     <td>{{solicitud.FECHA}}</td>
                     <td>

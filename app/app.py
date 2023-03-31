@@ -96,16 +96,16 @@ def usuario():
 @app.route('/cliente/<idclien>', methods=['POST', 'GET'])
 def cliente(idclien):
     if "usuario" in session:
-        tipodocs, error = get_tipodoc()
-        categorias, error = get_categorias()
-        tipocontribs, error = get_tipocontribuciones()
-        estadosciviles, error = get_estadocivil()
-        localidades, error = get_localidades()
+        tipodocs, error = get_datos('tipodoc')
+        categorias, error = get_datos('categorias')
+        tipocontribs, error = get_datos('tipocontribuciones')
+        estadosciviles, error = get_datos('estadocivil')
+        localidades, error = get_datos('localidades')
         if error == None:
             if request.method == 'POST':
                 print('1')
                 idclien = request.form['buscar']
-                cliente, errorC = get_cliente(idclien)
+                cliente, errorC = get_datos('cliente', idclien)
                 if errorC == None:
                     session["cliente"] = cliente
                     return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, categorias=categorias)
@@ -172,7 +172,7 @@ def nuevoproducto():
             items = session.get("items")
             nuevoart = request.form['codart']
             artCant = int(request.form['cantidad'])
-            articulo, error = get_articulo(nuevoart)
+            articulo, error = get_datos('articulo', nuevoart)
             if bool(articulo) and error == None:
                 newItems = {'codigo': articulo.get('codigo'), 'detalle': articulo.get('nombre'), 'cantidad': artCant, 'unitario': articulo.get('prec1'), 'total': (articulo.get('prec1') * artCant)}
                 items.append(newItems)
@@ -191,7 +191,7 @@ def nuevoproducto():
 @app.route('/nuevocred', methods=["POST", "GET"])
 def nuevocred():
     print('nuevo credito')
-    sucursales, error = get_sucursales()
+    sucursales, error = get_datos('sucursales')
     if error == None:
         return render_template('/nuevocred.html', items=session.get("items"), sucursales=sucursales)
 
@@ -201,7 +201,7 @@ def solicitudCred():
     if request.method=="POST":
         cred = {}
         Dcliente = []
-        newItems = {'idcliente': session.get("cliente")["CLIEN"], 'sucursal': request.form['sucursal'], 'idvendedor': session.get("usuario")}
+        newItems = {'idcliente': session.get("cliente")["CLIEN"], 'sucursal': request.form['sucursal'], 'idvendedor': request.form['vendedor']}
         Dcliente.append(newItems)
         cred["cliente"] = Dcliente
         cred["items_cred"] = session.get("items")
@@ -236,14 +236,14 @@ def eliminar(i):
 
 @app.route('/solicitudes')
 def solicitudes():
-    creditos, error = get_creditos()
+    creditos, error = get_datos('creditos')
     if error == None:
         return render_template('/solicitudes.html', solicitudes=creditos)
 
 
 @app.route('/datosCredito/<id>')
 def datos(id):
-    cliente, error = get_cliente(id)
+    cliente, error = get_datos('cliente', id)
     if error == None:
         return render_template('/datosCred.html', cliente=cliente)
 
