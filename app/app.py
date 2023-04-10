@@ -3,6 +3,9 @@ import json
 from flask import (Flask, render_template, url_for, request, redirect, session, flash)
 from datetime import timedelta
 from api.api_cliente import *
+from api.api_credito import new_credito
+from db.db import get_db, init_app
+
 
 app = Flask(__name__)
 app.secret_key = "ffgghhllmm"
@@ -25,7 +28,7 @@ def after_request(response):
 def index():
     if "usuario" in session:
         data = {
-            'titulo': 'el título'
+            'titulo': 'San Francisco Hogar'
         }
         return render_template('index.html', data=data)
     else:
@@ -35,12 +38,12 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.path == '/login':
-            print('se envuentra en la ruta cliente')
+            print('se encuentra en la ruta cliente')
     if request.method == 'POST':
         usuario = request.form['usuario']
         # session.permanent = True
         clave = request.form['clave']
-        session["urlWS"] = 'http://localhost:8080/datasnap/rest/TSFHWebSvr/'
+        session["urlWS"] = 'http://localhost:8080/sfhapi/rest/TSFHWebSvr/'
         url = session['urlWS'] + 'usuario' + '/' + usuario + '/' + clave
         try:
             respuesta = requests.get(url)
@@ -96,25 +99,30 @@ def usuario():
 @app.route('/cliente/<idclien>', methods=['POST', 'GET'])
 def cliente(idclien):
     if "usuario" in session:
-        tipodocs, error = get_datos('tipodoc')
-        categorias, error = get_datos('categorias')
-        tipocontribs, error = get_datos('tipocontribuciones')
-        estadosciviles, error = get_datos('estadocivil')
-        localidades, error = get_datos('localidades')
+        tipodocs, error = get_tipodoc()
+        categorias, error = get_categorias()
+        tipocontribs, error = get_tipocontrib()
+        estadosciviles, error = get_estadocivil()
+        localidades, error = get_localidades()
+        viviendas, error = get_viviendas()
+        actividades, error = get_actividades()
         if error == None:
             if request.method == 'POST':
-                print('1')
                 idclien = request.form['buscar']
-                cliente, errorC = get_datos('cliente', idclien)
+                cliente, error = get_cliente(idclien)
+                if cliente != None:
+                    session["cliente"] = cliente
+                    return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, viviendas=viviendas, actividades=actividades, categorias=categorias)
+                """
                 if errorC == None:
                     session["cliente"] = cliente
-                    return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, categorias=categorias)
+                    return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, viviendas=viviendas, actividades=actividades, categorias=categorias)
+                """    
             else:
-                print('2')
                 cliente = 0
                 session['cliente'] = []
                 session['items'] = []
-                return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, categorias=categorias)
+                return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, viviendas=viviendas, actividades=actividades, categorias=categorias)
         else:
             return redirect(url_for('cliente'))
     else:
@@ -150,7 +158,7 @@ def grabarCliente():
         newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if ((datosCliente['clien'] == '') or (datosCliente['clien'] == None)):
             datosCliente = json.dumps(datosCliente, indent=4)
-            respuesta = requests.post(url, data=datosCliente, headers=newHeaders)
+            respuesta = requests.put(url, data=datosCliente, headers=newHeaders)
             if respuesta.status_code == 201:
                 flash(f"Nuevo cliente grabado", "info")
             else:
@@ -172,14 +180,15 @@ def nuevoproducto():
             items = session.get("items")
             nuevoart = request.form['codart']
             artCant = int(request.form['cantidad'])
-            articulo, error = get_datos('articulo', nuevoart)
+            articulo, error = get_articulo(nuevoart)
+            artUnitario = float(articulo.get('PREC1'))
             if bool(articulo) and error == None:
-                newItems = {'codigo': articulo.get('codigo'), 'detalle': articulo.get('nombre'), 'cantidad': artCant, 'unitario': articulo.get('prec1'), 'total': (articulo.get('prec1') * artCant)}
+                newItems = {'codigo': articulo.get('CODIGO'), 'detalle': articulo.get('NOMBRE'), 'cantidad': artCant, 'unitario': artUnitario, 'total': (articulo.get('PREC1') * artCant)}
                 items.append(newItems)
                 session["items"] = items
                 return render_template('/itemcred.html', items=session.get("items"))
             else:
-                flash("No se encontró el artículo")
+                flash("No se encontró el artículo", "error")
                 return render_template('/itemcred.html', items=session.get("items"))
         else:
             return render_template('/itemcred.html', items=session.get("items"))
@@ -190,8 +199,7 @@ def nuevoproducto():
 
 @app.route('/nuevocred', methods=["POST", "GET"])
 def nuevocred():
-    print('nuevo credito')
-    sucursales, error = get_datos('sucursales')
+    sucursales, error = get_sucursales()
     if error == None:
         return render_template('/nuevocred.html', items=session.get("items"), sucursales=sucursales)
 
@@ -199,21 +207,22 @@ def nuevocred():
 @app.route ('/solicitudCred', methods=["POST"])
 def solicitudCred():
     if request.method=="POST":
-        cred = {}
-        Dcliente = []
         newItems = {'idcliente': session.get("cliente")["CLIEN"], 'sucursal': request.form['sucursal'], 'idvendedor': request.form['vendedor']}
-        Dcliente.append(newItems)
-        cred["cliente"] = Dcliente
-        cred["items_cred"] = session.get("items")
-        cred = json.dumps(cred, indent=4)
-        print(cred)
+        #Dcliente.append(newItems)
+        #cred["cliente"] = Dcliente
+        #cred["items_cred"] = session.get("items")
+        #cred = json.dumps(cred, indent=4)
+        print(session.get("items"))
+        error = new_credito(cliente_cred=newItems, items_cred=session.get("items"))
+        """
         url = session['urlWS'] + 'solcred'
         newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         respuesta = requests.post(url, data=cred, headers=newHeaders)
-        if respuesta.status_code == 200:
+        """
+        if error == None:
             flash(f"Nuevo crédito grabado", "info")
         else:    
-            flash(f"Error insertando datos de la solicitud de crédito: {respuesta.status_code}", "error")
+            flash(f"Error insertando datos de la solicitud de crédito: {error.get('error')}", "error")
         session['cliente'] = []
         session['items'] = []
         return redirect(url_for('cliente'))
@@ -236,14 +245,14 @@ def eliminar(i):
 
 @app.route('/solicitudes')
 def solicitudes():
-    creditos, error = get_datos('creditos')
+    creditos, error = get_creditos(0)
     if error == None:
         return render_template('/solicitudes.html', solicitudes=creditos)
 
 
 @app.route('/datosCredito/<id>')
 def datos(id):
-    cliente, error = get_datos('cliente', id)
+    cliente, error = get_cliente(id)
     if error == None:
         return render_template('/datosCred.html', cliente=cliente)
 
@@ -277,4 +286,5 @@ if __name__ == '__main__':
     # esto enlaza la ruta (1er parametro), con las funcion (2do parametro)
     app.add_url_rule('/query_string', view_func=query_string)
     app.register_error_handler(404, pagina_no_encontrada)
+    init_app(app)
     app.run(debug=True, port=5000)

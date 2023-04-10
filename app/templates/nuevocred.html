@@ -53,10 +53,10 @@ Nuevo crédito
                     <div class="col-4">
                         <select name="sucursal" id="sucursal" class="form-control" value="{{ session['cliente']['sucursal'] }}">
                             {% for sucursal in sucursales %}
-                                {% if session['cliente']['sucursal'] == sucursal.sucursal  %}
-                                    <option value="{{ sucursal.sucursal }}" selected>{{ sucursal.nombre }} </option>
+                                {% if session['cliente']['sucursal'] == sucursal.SUCURSAL  %}
+                                    <option value="{{ sucursal.SUCURSAL }}" selected>{{ sucursal.NOMBRE }} </option>
                                 {% else %}                    
-                                    <option value="{{ sucursal.sucursal }}">{{ sucursal.nombre }} </option>
+                                    <option value="{{ sucursal.SUCURSAL }}">{{ sucursal.NOMBRE }} </option>
                                 {% endif %}    
                             {% endfor %}
                         </select>

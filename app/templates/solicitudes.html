@@ -20,13 +20,13 @@ Solicitudes de Crédito
         <tbody>
             {% for solicitud in solicitudes %}
                 <tr>
-                    <td>{{solicitud.idcliente}} - {{solicitud.nomcli}}</td>
-                    <td>{{solicitud.idvendedor}}</td>
-                    <td>{{solicitud.idsucursal}} - {{solicitud.sucursal}}</td>
-                    <td>$ {{solicitud.total}}</td>
+                    <td>{{solicitud.IDCLIENTE}} - {{solicitud.NOMCLI}}</td>
+                    <td>{{solicitud.IDVENDEDOR}}</td>
+                    <td>{{solicitud.IDSUCURSAL}} - {{solicitud.SUCURSAL}}</td>
+                    <td>$ {{solicitud.TOTAL}}</td>
                     <td>{{solicitud.FECHA}}</td>
                     <td>
-                        <a href="{{ url_for('datos', id = solicitud.idcliente) }}" class="btn btn-success">Detalles</a>
+                        <a href="{{ url_for('datos', id = solicitud.IDCLIENTE) }}" class="btn btn-success">Detalles</a>
                     </td>
                 </tr>
             {% endfor %}

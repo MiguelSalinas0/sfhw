@@ -6,8 +6,8 @@
     <div class=".container-md justify-content-around align-items-center">
         <form action="cliente" method="POST">
             <div class="justify-content-center row my-2">
-                <label for="buscar" class="col-2 col-form-label">Buscar</label>
-                <div class="col-6">
+                <label for="buscar" class="col-4 col-form-label">Buscar por N° de documento</label>
+                <div class="col-4">
                     <input type="text" name="buscar" id="buscar" class="form-control" maxlength="8" required />
                 </div>
                 <div class="col-2">
@@ -50,13 +50,12 @@
                 <label for="tipodocumento" class="col-12 col-form-label">Tipo documento</label>
                 <div class="col-12">
                     <select name="tipodoc" id="tipodoc" class="form-control" value="{{ session['cliente']['TDOC'] }}">
-                        {% for tipodoc in tipodocs %} {% if session['cliente']['TDOC'] ==
-                        tipodoc.idtipo %}
-                        <option value="{{ tipodoc.idtipo }}" selected>
-                            {{ tipodoc.nombre }}
+                        {% for tipodoc in tipodocs %} {% if session['cliente']['TDOC'] == tipodoc.IDTIPO %}
+                        <option value="{{ tipodoc.IDTIPO }}" selected>
+                            {{ tipodoc.NOMBRE }}
                         </option>
                         {% else %}
-                        <option value="{{ tipodoc.idtipo }}">{{ tipodoc.nombre }}</option>
+                        <option value="{{ tipodoc.IDTIPO }}">{{ tipodoc.NOMBRE }}</option>
                         {% endif %} {% endfor %}
                     </select>
                 </div>
@@ -72,16 +71,17 @@
                 <label for="ctrib" class="col-12 col-form-label">Tipo IVA</label>
                 <div class="col-12">
                     <select name="ctrib" id="ctrib" class="form-control" value="{{ session['cliente']['CTRIB'] }}">
-                        {% for tipocontrib in tipocontribs %} {% if
-                        session['cliente']['CTRIB'] == tipocontrib.idtipo %}
-                        <option value="{{ tipocontrib.idtipo }}" selected>
-                            {{ tipocontrib.nombre }}
-                        </option>
-                        {% else %}
-                        <option value="{{ tipocontrib.idtipo }}">
-                            {{ tipocontrib.nombre }}
-                        </option>
-                        {% endif %} {% endfor %}
+                        {% for tipocontrib in tipocontribs %} 
+                            {% if session['cliente']['CTRIB'] == tipocontrib.IDTIPO %}
+                            <option value="{{ tipocontrib.IDTIPO }}" selected>
+                                {{ tipocontrib.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ tipocontrib.idtipo }}">
+                                {{ tipocontrib.NOMBRE }}
+                            </option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -89,16 +89,17 @@
                 <label for="catego" class="col-12 col-form-label">Categoría</label>
                 <div class="col-12">
                     <select name="catego" id="catego" class="form-control" value="{{ session['cliente']['CATEGO'] }}">
-                        {% for categoria in categorias %} {% if session['cliente']['CATEGO']
-                        == categoria.catego %}
-                        <option value="{{ categoria.catego }}" selected>
-                            {{ categoria.nombre }}
-                        </option>
-                        {% else %}
-                        <option value="{{ categoria.catego }}">
-                            {{ categoria.nombre }}
-                        </option>
-                        {% endif %} {% endfor %}
+                        {% for categoria in categorias %} 
+                            {% if session['cliente']['CATEGO'] == categoria.CATEGO %}
+                            <option value="{{ categoria.catego }}" selected>
+                                {{ categoria.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ categoria.CATEGO }}">
+                                {{ categoria.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -140,16 +141,17 @@
                 <label for="localidad" class="col-12 col-form-label">Localidad</label>
                 <div class="col-12">
                     <select name="codloc" id="codloc" class="form-control" value="{{ session['cliente']['CODLOC'] }}">
-                        {% for localidad in localidades %} {% if
-                        session['cliente']['CODLOC'] == localidad.codloc %}
-                        <option value="{{ localidad.codloc }}" selected>
-                            {{ localidad.nombre }}
-                        </option>
-                        {% else %}
-                        <option value="{{ localidad.codloc }}">
-                            {{ localidad.nombre }}
-                        </option>
-                        {% endif %} {% endfor %}
+                        {% for localidad in localidades %} 
+                            {% if session['cliente']['CODLOC'] == localidad.CODLOC %}
+                            <option value="{{ localidad.codloc }}" selected>
+                                {{ localidad.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ localidad.CODLOC }}">
+                                {{ localidad.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -158,16 +160,17 @@
                 <div class="col-12">
                     <select name="estadociv" id="estadociv" class="form-control"
                         value="{{ session['cliente']['ESTADOCIV'] }}">
-                        {% for estadocivil in estadosciviles %} {% if
-                        session['cliente']['ESTADOCIV'] == estadocivil.idtipo %}
-                        <option value="{{ estadocivil.idtipo }}" selected>
-                            {{ estadocivil.nombre }}
-                        </option>
-                        {% else %}
-                        <option value="{{ estadocivil.idtipo }}">
-                            {{ estadocivil.nombre }}
-                        </option>
-                        {% endif %} {% endfor %}
+                        {% for estadocivil in estadosciviles %} 
+                            {% if session['cliente']['ESTADOCIV'] == estadocivil.IDTIPO %}
+                            <option value="{{ estadocivil.IDTIPO }}" selected>
+                                {{ estadocivil.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ estadocivil.IDTIPO }}">
+                                {{ estadocivil.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -203,33 +206,54 @@
             </div>
         </div>
         <div class="mb-3 row">
-            <div class="col-sm-6">
-                <legend class="col-form-label col-sm-2 pt-0">Sexo</legend>
+            <div class="form-group col-md-3">
+                <label for="vivienda" class="col-12 col-form-label">Tipo vivienda</label>
+                <div class="col-12">
+                    <select name="vivienda" id="vivienda" class="form-control" value="{{ session['cliente']['VIVIENDA'] }}">
+                        {% for vivienda in viviendas %} 
+                            {% if session['cliente']['VIVIENDA'] == vivienda.IDTIPO %}
+                            <option value="{{ vivienda.IDTIPO }}" selected>
+                                {{ vivienda.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ vivienda.IDTIPO }}">
+                                {{ vivienda.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="actividad" class="col-12 col-form-label">Actividad</label>
+                <div class="col-12">
+                    <select name="actividad" id="actividad" class="form-control"
+                        value="{{ session['cliente']['ACTIVIDAD'] }}">
+                        {% for actividad in actividades %} 
+                            {% if session['cliente']['ACTIVIDAD'] == actividad.IDTIPO %}
+                            <option value="{{ actividad.IDTIPO }}" selected>
+                                {{ actividad.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ actividad.IDTIPO }}">
+                                {{ actividad.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        
+            <div class="form-group col-md-3">
+                <legend class="col-form-label col-md-2">Sexo</legend>
                 <select name="sexo" class="form-control">
                     <option value="02" {% if session['cliente']['SEXO'] == '02' %}selected{% endif %}>Femenino</option>
                     <option value="01" {% if session['cliente']['SEXO'] == '01' %}selected{% endif %}>Masculino</option>
                 </select>
-                <!--
-                <div class="form-check">
-                    {% if session['cliente']['SEXO'] == '02' %}
-                    <input class="form-check-input" type="radio" name="sexoFem" id="sexo" value="02" checked />
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="sexoFem" id="sexo" value="02" />
-                    {% endif %}
-                    <label class="form-check-label" for="sexo"> Femenino </label>
-                </div>
-                <div class="form-check">
-                    {% if session['cliente']['SEXO'] == '01' %}
-                    <input class="form-check-input" type="radio" name="sexoMasc" id="sexo" value="01" checked />
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="sexoMasc" id="sexo" value="01" />
-                    {% endif %}
-                    <label class="form-check-label" for="sexoMasc"> Masculino </label>
-                </div>
-                -->
+                
             </div>
-            <div class="form-group col-sm-6">
-                <label for="fnacim">Fecha nacimiento</label>
+            <div class="form-group col-md-3">
+                <label for="fnacim" class="col-12 col-form-label">Fecha nacimiento</label>
                 <input type="date" class="form-control" name="fnacim" id="fnacim"
                     placeholder="Ingrese fecha de nacimiento" value="{{ session['cliente']['FNACIM'] }}" />
             </div>
@@ -238,6 +262,73 @@
             <div class="form-group col-md-2">
                 <label for="obs">Observaciones</label>
                 <textarea name="obs" id="obs" cols="150" rows="5"> {{ session['cliente']['OBS'] }}</textarea>
+            </div>
+        </div>
+        <hr />
+        <h2>Datos laborales</h2>
+        <hr/>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="trabajo" class="col-2 col-form-label">Trabajo</label>
+                <div class="col-10">
+                    <input type="text" class="form-control" name="trabajo" id="trabajo" placeholder="Ingrese donde trabaja"
+                        value="{{ session['cliente']['TRABAJO'] }}" />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="cargo" class="col-2 col-form-label">Cargo</label>
+                <div class="col-10">
+                    <input type="text" class="form-control" name="cargo" id="cargo"
+                        placeholder="Ingrese el cargo" value="{{ session['cliente']['CARGO'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="domtra1" class="col-12 col-form-label">Domicilio laboral 1</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="domtra1" id="domtra1" placeholder="Domicilio laboral 1"
+                        value="{{ session['cliente']['DOMTRA1'] }}" />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="domtra2" class="col-12 col-form-label">Domicilio laboral 2</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="domtra2" id="domtra2" placeholder="Domicilio laboral 2"
+                        value="{{ session['cliente']['DOMTRA1'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="loctra" class="col-12 col-form-label">Localidad laboral</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="loctra" id="loctra" placeholder="Localidad laboral"
+                        value="{{ session['cliente']['LOCTRA'] }}" />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="cpostra" class="col-12 col-form-label">Cod. postal laboral</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="cpostra" id="cpostra" placeholder="Código postal laboral"
+                        value="{{ session['cliente']['CPOSTRA'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6">
+                <label for="ingresos" class="col-12 col-form-label">Ingreso laboral</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="ingresos" id="ingresos" placeholder="Ingreso laboral"
+                        value="{{ session['cliente']['INGRESOS'] }}" />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="ingresos_o" class="col-12 col-form-label">Otros ingresos</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="ingresos_o" id="ingresos_o" placeholder="Otros ingresos"
+                        value="{{ session['cliente']['INGRESOS_O'] }}" />
+                </div>
             </div>
         </div>
         <div class="mb-3 row">
