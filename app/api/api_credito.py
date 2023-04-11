@@ -37,3 +37,43 @@ def new_credito(cliente_cred, items_cred):
         error = {'error':'Error grabando credito: ' + str(E)}
 
     return error
+
+def get_credito(id: int):
+    error = None
+    con, cur = get_db()
+    cur.execute("select CR.IDCLIENTE, TRIM(C.APELLIDO) as APELLIDO , TRIM(C.NOMBRE) as NOMBRE, " +
+                "C.SEXO, (TRIM(C.CODAREA) || TRIM(C.TELEFONO)) as TELEFONO, C.DOMICILIO1, C.DNI, " +
+                "C.TRABAJO, C.FNACIM, CR.FECHA, E.NOMBRE as VENDEDOR, " +
+                "S.NOMBRE as SUCURSAL, CR.ESTADO, CR.TOTAL, CR.DIA, CR.HORA, CR.TOTAL_AUTORIZADO " +
+                "from creditos CR " +
+                "left join clientes C on C.CLIEN = CR.IDCLIENTE " +
+                "left join sucursal S on S.SUCURSAL = CR.IDSUCURSAL " +
+                "left join usuario E on E.USUARIO = CR.IDVENDEDOR " +
+                "where CR.ID = ?", (id,))
+    datos = cur.fetchone()
+    if datos == None:
+          datos = {}
+          error = {'error': f'No hay datos para el crédito solicitado: {id}'}
+    else:
+      datos = cur.to_dict(datos)
+    con.commit      
+    return datos, error
+
+def get_itemscred(id: int):
+    error = None
+    con, cur = get_db()
+    cur.execute("select ICR.IDARTICULO, A.NOMBRE as DETALLE, M.NOMBRE as MARCA, ICR.CANTIDAD, ICR.UNITARIO " +
+                "from items_creditos ICR " + 
+                "left join articulos A on A.CODIGO = ICR.IDARTICULO " +
+                "left join marcas M on M.MARCA = A.MARCA " +
+                "where ICR.ID = ?", (id,))
+    rows = cur.fetchall()
+    if rows == None:
+          datos = {}
+          error = {'error': f'No hay datos de artículos para el crédito solicitado: {id}'}
+    else:
+        datos = []
+        for row in rows:
+            datos.append(cur.to_dict(row))
+    con.commit      
+    return datos, error

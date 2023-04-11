@@ -26,7 +26,7 @@ Solicitudes de Crédito
                     <td>$ {{solicitud.TOTAL}}</td>
                     <td>{{solicitud.FECHA}}</td>
                     <td>
-                        <a href="{{ url_for('datos', id = solicitud.IDCLIENTE) }}" class="btn btn-success">Detalles</a>
+                        <a href="{{ url_for('datos', id = solicitud.ID) }}" class="btn btn-success">Detalles</a>
                     </td>
                 </tr>
             {% endfor %}

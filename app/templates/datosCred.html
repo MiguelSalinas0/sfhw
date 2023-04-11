@@ -5,7 +5,7 @@ Solicitudes de Crédito
 
 {% block body %}
 
-<h3 class="pt-4 pb-4">Datos Cliente</h3>
+<h3 class="pt-4 pb-4">Datos del Cliente</h3>
 
 <div class="mb-3 row">
     <div class="form-group col-md-4">
@@ -75,6 +75,45 @@ Solicitudes de Crédito
 </div>
 
 <h3 class="pt-4 pb-4">Datos del Crédito</h3>
+    <div class="mb-3 row">
+        <div class="form-group col-md-4">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Fecha</span>
+                <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['FECHA']}}">
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">Total solicitado</span>
+                <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['TOTAL']}}">
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="table-responsive-sm">
+        <table class="table table-primary">
+            <thead>
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Detalle</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Unitario</th>
+                    <th scope="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr class="">
+                        <td scope="row">{{item.IDARTICULO}}</td>
+                        <td>{{item.MARCA}} {{item.DETALLE}}</td>
+                        <td>{{item.CANTIDAD}}</td>
+                        <td>{{item.UNITARIO}}</td>
+                        <td>{{item.total}}</td>
+                    </tr>
+                {% endfor %}    
+            </tbody>
+        </table>
+    </div>
 
 <h3 class="pt-4 pb-4">Documentación</h3>
 

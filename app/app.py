@@ -3,7 +3,8 @@ import json
 from flask import (Flask, render_template, url_for, request, redirect, session, flash)
 from datetime import timedelta
 from api.api_cliente import *
-from api.api_credito import new_credito
+from api.api_credito import new_credito, get_credito, get_itemscred
+from api.api_usuario import get_usuario
 from db.db import get_db, init_app
 
 
@@ -43,12 +44,9 @@ def login():
         usuario = request.form['usuario']
         # session.permanent = True
         clave = request.form['clave']
-        session["urlWS"] = 'http://localhost:8080/sfhapi/rest/TSFHWebSvr/'
-        url = session['urlWS'] + 'usuario' + '/' + usuario + '/' + clave
+        datosUsr, error = get_usuario(usuario = usuario, clave = clave)
         try:
-            respuesta = requests.get(url)
-            if respuesta.status_code == 200:
-                datosUsr = respuesta.json()
+            if error == None:
                 if "USUARIO" in datosUsr:
                     session["usuario"] = datosUsr["USUARIO"]
                     session["nombreUsr"] = datosUsr["NOMBRE"]
@@ -208,17 +206,8 @@ def nuevocred():
 def solicitudCred():
     if request.method=="POST":
         newItems = {'idcliente': session.get("cliente")["CLIEN"], 'sucursal': request.form['sucursal'], 'idvendedor': request.form['vendedor']}
-        #Dcliente.append(newItems)
-        #cred["cliente"] = Dcliente
-        #cred["items_cred"] = session.get("items")
-        #cred = json.dumps(cred, indent=4)
         print(session.get("items"))
         error = new_credito(cliente_cred=newItems, items_cred=session.get("items"))
-        """
-        url = session['urlWS'] + 'solcred'
-        newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        respuesta = requests.post(url, data=cred, headers=newHeaders)
-        """
         if error == None:
             flash(f"Nuevo crédito grabado", "info")
         else:    
@@ -252,10 +241,17 @@ def solicitudes():
 
 @app.route('/datosCredito/<id>')
 def datos(id):
-    cliente, error = get_cliente(id)
+    cliente, error = get_credito(id)
     if error == None:
-        return render_template('/datosCred.html', cliente=cliente)
-
+        items, error_items = get_itemscred(id)
+        if error_items == None:
+            return render_template('/datosCred.html', cliente=cliente, items = items)
+        else:
+            flash(f'Error consultado items de crédito: {error_items}', 'error')
+        return redirect(url_for('solicitudes'))
+    else:
+        flash(f'Error consultado crédito: {error}', 'error')
+        return redirect(url_for('solicitudes'))
 
 @app.route('/estadocuenta')
 def estadoCuenta():
