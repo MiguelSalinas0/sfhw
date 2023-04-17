@@ -22,13 +22,20 @@
 
 <div class="container">
     <form action="grabarCliente" method="POST">
-        <div class="form-group col-md-4 mb-3">
-            <label for="lien" class="col-12 col-form-label"># Cliente</label>
-            <div class="col-12">
-                <input type="text" class="form-control" name="clien" id="clien" readonly="true"
-                    value="{{ session['cliente']['CLIEN'] }}" />
-            </div>
-        </div>
+        <div class="mb-3 row">
+            <div class="form-group col-md-6 mb-3">
+                <label for="clien" class="col-4 col-form-label"># Cliente</label>
+                <div class="col-4">
+                    <input type="text" class="form-control" name="clien" id="clien" readonly="true"
+                        value="{{ session['cliente']['CLIEN'] }}" />
+                </div>
+            </div>    
+            {% if session['cliente']['INHA'] == 1 %}
+                <div class="form-group col-md-6 mb-3">    
+                    <h3 class="col-6 row text-danger strong"> Cliente inhabilitado </h3>
+                </div>
+            {% endif %}    
+        </div>    
         <div class="mb-3 row">
             <div class="form-group col-md-6">
                 <label for="nombre" class="col-2 col-form-label">Nombre</label>
@@ -91,7 +98,7 @@
                     <select name="catego" id="catego" class="form-control" value="{{ session['cliente']['CATEGO'] }}">
                         {% for categoria in categorias %} 
                             {% if session['cliente']['CATEGO'] == categoria.CATEGO %}
-                            <option value="{{ categoria.catego }}" selected>
+                            <option value="{{ categoria.CATEGO }}" selected>
                                 {{ categoria.NOMBRE }}
                             </option>
                             {% else %}
@@ -124,14 +131,14 @@
             <div class="form-group col-md-6">
                 <label for="calle1" class="col-12 col-form-label">Calle 1</label>
                 <div class="col-12">
-                    <input type="text" class="form-control" name="calle1" id="domicilio1"
+                    <input type="text" class="form-control" name="calle1" id="calle1"
                         placeholder="Detalle adicional de la direccion" value="{{ session['cliente']['CALLE1'] }}" />
                 </div>
             </div>
             <div class="form-group col-md-6">
                 <label for="calle2" class="col-12 col-form-label">Calle 2</label>
                 <div class="col-12">
-                    <input type="text" class="form-control" name="calle2" id="domicilio2"
+                    <input type="text" class="form-control" name="calle2" id="calle2"
                         placeholder="Detalle adicional de la direccion" value="{{ session['cliente']['CALLE2'] }}" />
                 </div>
             </div>
@@ -143,7 +150,7 @@
                     <select name="codloc" id="codloc" class="form-control" value="{{ session['cliente']['CODLOC'] }}">
                         {% for localidad in localidades %} 
                             {% if session['cliente']['CODLOC'] == localidad.CODLOC %}
-                            <option value="{{ localidad.codloc }}" selected>
+                            <option value="{{ localidad.CODLOC }}" selected>
                                 {{ localidad.NOMBRE }}
                             </option>
                             {% else %}
@@ -184,7 +191,7 @@
         </div>
         <div class="row mb-3">
             <div class="form-group col-md-3">
-                <label for="codarea1">Cod. area 1</label>
+                <label for="codarea">Cod. area 1</label>
                 <input type="text" class="form-control" name="codarea" id="codarea"
                     placeholder="Ingrese el código de area" value="{{ session['cliente']['CODAREA'] }}" />
             </div>
@@ -295,7 +302,7 @@
                 <label for="domtra2" class="col-12 col-form-label">Domicilio laboral 2</label>
                 <div class="col-12">
                     <input type="text" class="form-control" name="domtra2" id="domtra2" placeholder="Domicilio laboral 2"
-                        value="{{ session['cliente']['DOMTRA1'] }}" />
+                        value="{{ session['cliente']['DOMTRA2'] }}" />
                 </div>
             </div>
         </div>
@@ -339,7 +346,7 @@
                 <a class="btn btn-warning" href="{{ url_for('nuevoproducto') }}" role="button">Nuevo crédito</a>
             </div>
             <div class="offset-sm-1 col-sm-2 my-2">
-                <a class="btn btn-success" href="estadocuenta" role="button">Estado de cuenta</a>
+                <a class="btn btn-success" href="{{ url_for('estado_cuenta') }}" role="button">Estado de cuenta</a>
             </div>
             <div class="offset-sm-1 col-sm-2 my-2">
                 <a class="btn btn-danger" href="documentacion" role="button">Documentacion</a>

@@ -4,5 +4,30 @@ Estado de cuenta
 {% endblock %}
 
 {% block body %}
-    Estado de cuenta
+<h3 class="pt-4 pb-4">Historial Crediticio</h3>
+<div class="table-responsive-sm">
+    <table class="table table-info">
+        <thead>
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Mto. crédito</th>
+                <th scope="col">Pagos</th>
+                <th scope="col">Saldo venc.</th>
+                <th scope="col">Ctas impagas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for credito in creditos_otorgados %}
+                <tr class="">
+                    <td scope="row">{{credito.FECHA}}</td>
+                    <td>{{credito.DEBITO}}</td>
+                    <td>{{credito.TOTCAPITAL}}</td>
+                    <td>{{credito.SALDO_VENCIDO}}</td>
+                    <td>{{credito.CTAS_IMPAGAS}}</td>
+                </tr>
+            {% endfor %}    
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}

@@ -1,9 +1,9 @@
 import requests
 import json
 from flask import (Flask, render_template, url_for, request, redirect, session, flash)
-from datetime import timedelta
+from datetime import datetime
 from api.api_cliente import *
-from api.api_credito import new_credito, get_credito, get_itemscred
+from api.api_credito import *
 from api.api_usuario import get_usuario
 from db.db import get_db, init_app
 
@@ -108,14 +108,15 @@ def cliente(idclien):
             if request.method == 'POST':
                 idclien = request.form['buscar']
                 cliente, error = get_cliente(idclien)
-                if cliente != None:
+                if error == None:
                     session["cliente"] = cliente
                     return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, viviendas=viviendas, actividades=actividades, categorias=categorias)
-                """
-                if errorC == None:
-                    session["cliente"] = cliente
+                else:
+                    cliente = 0
+                    session['cliente'] = []
+                    session['items'] = []
+                    flash(f'Error obteniendo datos del cliente: {error}', 'error')
                     return render_template('cliente.html', tipodocs=tipodocs, tipocontribs=tipocontribs, estadosciviles=estadosciviles, localidades=localidades, viviendas=viviendas, actividades=actividades, categorias=categorias)
-                """    
             else:
                 cliente = 0
                 session['cliente'] = []
@@ -140,6 +141,8 @@ def grabarCliente():
         datosCliente['ctrib'] = request.form['ctrib']
         datosCliente['domicilio1'] = request.form['domicilio1']
         datosCliente['domicilio2'] = request.form['domicilio2']
+        datosCliente['calle1'] = request.form['calle1']
+        datosCliente['calle2'] = request.form['calle2']
         datosCliente['codloc'] = request.form['codloc']
         datosCliente['estadociv'] = request.form['estadociv']
         datosCliente['email'] = request.form['email']
@@ -147,49 +150,75 @@ def grabarCliente():
         datosCliente['telefono'] = request.form['telefono']
         datosCliente['codarea1'] = request.form['codarea1']
         datosCliente['telefono1'] = request.form['telefono1']
+        datosCliente['vivienda'] = request.form['vivienda']
+        datosCliente['actividad'] = request.form['actividad']
         datosCliente['sexo'] = request.form['sexo']
         datosCliente['fnacim'] = request.form['fnacim']
         datosCliente['email'] = request.form['email']
         datosCliente['obs'] = request.form['obs']
-        url = session['urlWS']
-        url = url + 'cliente'
-        newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        datosCliente['trabajo'] = request.form['trabajo']
+        datosCliente['cargo'] = request.form['cargo']
+        datosCliente['domtra1'] = request.form['domtra1']
+        datosCliente['domtra2'] = request.form['domtra2']
+        datosCliente['loctra'] = request.form['loctra']
+        datosCliente['cpostra'] = request.form['cpostra']
+        datosCliente['ingresos'] = float(request.form['ingresos'])
+        datosCliente['ingresos_o'] = float(request.form['ingresos_o'])
+        
         if ((datosCliente['clien'] == '') or (datosCliente['clien'] == None)):
-            datosCliente = json.dumps(datosCliente, indent=4)
-            respuesta = requests.put(url, data=datosCliente, headers=newHeaders)
-            if respuesta.status_code == 201:
-                flash(f"Nuevo cliente grabado", "info")
+            #datosCliente = json.dumps(datosCliente, indent=4)
+            print('datos de cliente')
+            print(datosCliente)
+            print('--------------------------------')
+            datosCliente, error = insert_cliente(datosCliente = datosCliente)
+            if error == None:
+                flash(f"Error insertando datos del cliente: {error}", "error")
             else:
-                flash(f"Error insertando datos del cliente: {respuesta.status_code}", "error")
+                flash(f"Nuevo cliente grabado", "info")
         else:
-            datosCliente = json.dumps(datosCliente, indent=4)
-            respuesta = requests.put(url, data=datosCliente, headers=newHeaders)
-            if respuesta.status_code == 201:
+            #datosCliente = json.dumps(datosCliente, indent=4)
+            datosCliente, error = update_cliente(datosCliente = datosCliente)
+            #error = None
+            #print(datosCliente)
+            if error == None:
                 flash(f"Datos del cliente actualizados", "info")
             else:
-                flash(f"Error actualizando datos del cliente: {respuesta.status_code}", "error")
+                flash(f"Error actualizando datos del cliente: {error}", "error")
     return redirect(url_for('cliente'))
+
+@app.route('/estado_cuenta')
+def estado_cuenta():
+    if session.get("cliente") != []:
+        creditos_otorgados = get_historial_creditos(session['cliente']['CLIEN'])
+        return render_template('estadocuenta.html', creditos_otorgados = creditos_otorgados)
+    else:
+        flash("Se debe seleccionar un cliente", category = "error")
+        return redirect(url_for('cliente'))
 
 
 @app.route('/nuevoproducto', methods=["POST", "GET"])
 def nuevoproducto():
     if session.get("cliente") != []:
-        if request.method == "POST":
-            items = session.get("items")
-            nuevoart = request.form['codart']
-            artCant = int(request.form['cantidad'])
-            articulo, error = get_articulo(nuevoart)
-            artUnitario = float(articulo.get('PREC1'))
-            if bool(articulo) and error == None:
-                newItems = {'codigo': articulo.get('CODIGO'), 'detalle': articulo.get('NOMBRE'), 'cantidad': artCant, 'unitario': artUnitario, 'total': (articulo.get('PREC1') * artCant)}
-                items.append(newItems)
-                session["items"] = items
-                return render_template('/itemcred.html', items=session.get("items"))
+        #if session['cliente']['INHA'] == '0':
+            if request.method == "POST":
+                items = session.get("items")
+                nuevoart = request.form['codart']
+                artCant = int(request.form['cantidad'])
+                articulo, error = get_articulo(nuevoart)
+                artUnitario = float(articulo.get('PREC1'))
+                if bool(articulo) and error == None:
+                    newItems = {'codigo': articulo.get('CODIGO'), 'detalle': articulo.get('NOMBRE'), 'cantidad': artCant, 'unitario': artUnitario, 'total': (articulo.get('PREC1') * artCant)}
+                    items.append(newItems)
+                    session["items"] = items
+                    return render_template('/itemcred.html', items=session.get("items"))
+                else:
+                    flash("No se encontró el artículo", "error")
+                    return render_template('/itemcred.html', items=session.get("items"))
             else:
-                flash("No se encontró el artículo", "error")
                 return render_template('/itemcred.html', items=session.get("items"))
-        else:
-            return render_template('/itemcred.html', items=session.get("items"))
+        #else:    
+        #    flash("No se puede generar un crédito a un cliente inhabilitado", category = "error")
+        #    return redirect(url_for('cliente'))
     else:
         flash("Se debe seleccionar un cliente", category = "error")
         return redirect(url_for('cliente'))
@@ -238,14 +267,21 @@ def solicitudes():
     if error == None:
         return render_template('/solicitudes.html', solicitudes=creditos)
 
+@app.route('/pendientes')
+def pendientes():
+    creditos, error = get_creditos(1)
+    if error == None:
+        return render_template('/solicitudes.html', solicitudes=creditos)
 
-@app.route('/datosCredito/<id>')
-def datos(id):
-    cliente, error = get_credito(id)
+
+@app.route('/datosCredito/<id>/<estado>')
+def datosCredito(id: int, estado: int):
+    cliente, error = get_credito_pendiente(id, estado)
+    creditos_otorgados = get_creditos_otorgados(id)
     if error == None:
         items, error_items = get_itemscred(id)
         if error_items == None:
-            return render_template('/datosCred.html', cliente=cliente, items = items)
+            return render_template('/datosCred.html', cliente=cliente, items = items, creditos_otorgados = creditos_otorgados)
         else:
             flash(f'Error consultado items de crédito: {error_items}', 'error')
         return redirect(url_for('solicitudes'))
@@ -255,6 +291,7 @@ def datos(id):
 
 @app.route('/estadocuenta')
 def estadoCuenta():
+
     return render_template('/estadocuenta.html')
 
 
