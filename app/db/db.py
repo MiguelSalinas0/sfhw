@@ -31,7 +31,7 @@ driver_config.register_server('local', srv_cfg)
 # Register database
 db_cfg = """[sfh]
 server = local
-database = C:/Adrian/bd/NV30_000024.fdb
+database = C:/Users/w10-21h2/Desktop/db/NV30_000024.fdb
 protocol = inet
 charset = utf8
 """

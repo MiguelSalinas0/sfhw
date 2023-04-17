@@ -1,0 +1,220 @@
+{% extends "layout.html" %}
+{% block titulo %}Usuario{% endblock %}
+{% block body %}
+
+<div class=".container border back">
+    <div class=".container-md justify-content-around align-items-center">
+        <form action="user" method="POST">
+            <div class="justify-content-center row my-2">
+                <label for="buscar" class="col-4 col-form-label">Buscar por N° de usuario</label>
+                <div class="col-4">
+                    <input type="text" name="buscar" id="buscar" class="form-control" maxlength="8" required />
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<div class="container">
+    <form action="grabarUsuario" method="post">
+        <input type="hidden" name="usuario" id="usuario" value="{{session['user']['USUARIO']}}">
+        <div class="mb-4 row">
+            <div class="form-group col-md-3">
+                <label for="tipodoc" class="col-12 col-form-label">Tipo documento</label>
+                <div class="col-12">
+                    <select name="tipodoc" id="tipodoc" class="form-control" value="{{ session['cliente']['TDOC'] }}">
+                        {% for tipodoc in tipodocs %} {% if session['user']['TDOC'] == tipodoc.IDTIPO %}
+                        <option value="{{ tipodoc.IDTIPO }}" selected>
+                            {{ tipodoc.NOMBRE }}
+                        </option>
+                        {% else %}
+                        <option value="{{ tipodoc.IDTIPO }}">{{ tipodoc.NOMBRE }}</option>
+                        {% endif %} {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="dni" class="col-12 col-form-label">N° documento</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="dni" id="dni"
+                        placeholder="N° de documento" value="{{ session['user']['DNI'] }}" required />
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="nombre" class="col-12 col-form-label">Nombre</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="nombre" id="nombre" placeholder="Ingrese el nombre"
+                        value="{{ session['user']['NOMBRE'] }}" required />
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="catego" class="col-12 col-form-label">Categoría</label>
+                <div class="col-12">
+                    <select name="catego" id="catego" class="form-control" value="{{ session['user']['CATEGORIA'] }}">
+                        {% for categoria in categorias %} 
+                            {% if session['user']['CATEGORIA'] == categoria.CATEGO %}
+                            <option value="{{ categoria.CATEGO }}" selected>
+                                {{ categoria.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ categoria.CATEGO }}">
+                                {{ categoria.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <div class="form-group col-md-3">
+                <label for="cargo" class="col-12 col-form-label">Cargo</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="cargo" id="cargo"
+                        placeholder="Cargo" value="{{ session['user']['CARGO'] }}"/>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="email" class="col-12 col-form-label">Correo electrónico</label>
+                    <div class="col-12">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Ingrese el correo electrónico"
+                            value="{{ session['user']['EMAIL'] }}" />
+                    </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="provincia" class="col-12 col-form-label">Provincia</label>
+                <div class="col-12">
+                    <select name="provincia" id="provincia" class="form-control" value="{{ session['user']['CODPROV'] }}">
+                        {% for provincia in provincias %} 
+                            {% if session['user']['CODPROV'] == provincia.CODPROV %}
+                            <option value="{{ provincia.CODPROV }}" selected>
+                                {{ provincia.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ provincia.CODPROV }}">
+                                {{ provincia.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="localidad" class="col-12 col-form-label">Localidad</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="localidad" id="localidad" placeholder="Localidad"
+                        value="{{ session['user']['LOCALIDAD'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <div class="form-group col-md-6">
+                <label for="sucursal" class="col-12 col-form-label">Sucursal</label>
+                <div class="col-12">
+                    <select name="sucursal" id="sucursal" class="form-control" value="{{ session['user']['SUCURSAL'] }}">
+                        {% for sucursal in sucursales %} 
+                            {% if session['user']['SUCURSAL'] == sucursal.SUCURSAL %}
+                            <option value="{{ sucursal.SUCURSAL }}" selected>
+                                {{ sucursal.NOMBRE }}
+                            </option>
+                            {% else %}
+                            <option value="{{ sucursal.SUCURSAL }}">
+                                {{ sucursal.NOMBRE }}
+                            </option>
+                            {% endif %} 
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="cpostal" class="col-12 col-form-label">Código Postal</label>
+                <div class="col-12">
+                    <input type="text" class="form-control" name="cpostal" id="cpostal" placeholder="Código Postal"
+                        value="{{ session['user']['CPOSTAL'] }}" />
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <div class="form-group col-md-6">
+                <div class="form-group col-md-12">
+                    <label for="domicilio1" class="col-12 col-form-label">Domicilio 1</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control" name="domicilio1" id="domicilio1" placeholder="Domicilio 1"
+                            value="{{ session['user']['DOMICILIO1'] }}" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="form-group col-md-12">
+                    <label for="domicilio2" class="col-12 col-form-label">Domicilio 2</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control" name="domicilio2" id="domicilio2" placeholder="Domicilio 2"
+                            value="{{ session['user']['DOMICILIO2'] }}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group col-md-3">
+                <label for="codarea">Cod. area 1</label>
+                <input type="text" class="form-control" name="codarea" id="codarea"
+                    placeholder="Ingrese el código de area" value="{{ session['user']['CODAREA'] }}" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="telefono">N° de teléfono 1</label>
+                <input type="text" class="form-control" name="telefono" id="telefono"
+                    placeholder="Ingrese el N° de teléfono" value="{{ session['user']['TELEFONO'] }}" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="codarea1">Cod. area 2</label>
+                <input type="text" class="form-control" name="codarea1" id="codarea1"
+                    placeholder="Ingrese el código de area" value="{{ session['user']['CODAREA1'] }}" />
+            </div>
+            <div class="form-group col-md-3">
+                <label for="telefono1">N° de teléfono 2</label>
+                <input type="text" class="form-control" name="telefono1" id="telefono1"
+                    placeholder="Ingrese el N° de teléfono" value="{{ session['user']['TELEFONO1'] }}" />
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <div class="form-group col-md-6">
+                <div class="form-group col-md-12">
+                    <label for="user_name" class="col-12 col-form-label">Nombre de Usuario</label>
+                    <div class="col-12">
+                        <input type="text" class="form-control" name="user_name" id="user_name" placeholder="Nombre de usuario"
+                            value="{{ session['user']['NOMBRE_USR'] }}" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="form-group col-md-12">
+                    <label for="clave" class="col-12 col-form-label">Clave</label>
+                    <div class="col-12">
+                        <input type="password" class="form-control" name="clave" id="clave" placeholder="Ingrese nueva clave" value="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group col-md-2">
+                <label for="obs">Observaciones</label>
+                <textarea style="resize: none;" name="obs" id="obs" cols="150" rows="5"> {{ session['user']['OBS'] }}</textarea>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <div class="offset-sm-1 col-sm-2 my-2">
+                <button type="submit" class="btn btn-primary">Grabar cambios</button>
+            </div>
+            <div class="offset-sm-1 col-sm-2 my-2">
+                <a class="btn btn-danger" href="{{ url_for('deleteUser') }}" role="button">Eliminar Usuario</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

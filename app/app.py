@@ -1,10 +1,11 @@
 import requests
 import json
+import hashlib
 from flask import (Flask, render_template, url_for, request, redirect, session, flash)
 from datetime import timedelta
 from api.api_cliente import *
 from api.api_credito import new_credito, get_credito, get_itemscred
-from api.api_usuario import get_usuario
+from api.api_usuario import get_usuario, get_user, insert_usuario, update_user, drop_user
 from db.db import get_db, init_app
 
 
@@ -261,6 +262,88 @@ def estadoCuenta():
 @app.route('/documentacion')
 def documentacion():
     return render_template('/documentacion.html')
+
+
+@app.route('/user', methods=['POST', 'GET'], defaults={"iduser": 0})
+@app.route('/user/<iduser>', methods=['POST', 'GET'])
+def user(iduser):
+    if "usuario" in session:
+        tipodocs, error = get_tipodoc()
+        categorias, error = get_categorias()
+        localidades, error = get_localidades()
+        sucursales, error = get_sucursales()
+        provincias, error = get_provincias()
+        if error == None:
+            if request.method == 'POST':
+                iduser = request.form['buscar']
+                user, error = get_user(iduser)
+                if user.get('USUARIO') != None:
+                    session["user"] = user
+                    return render_template('/usuario_alt_baj.html',tipodocs=tipodocs, localidades=localidades, categorias=categorias, sucursales=sucursales, provincias=provincias)
+                else:
+                    flash('Usuario no encontrado', category='error')
+                    return redirect(url_for('user'))
+            else:
+                iduser = 0
+                session['user'] = []
+                return render_template('/usuario_alt_baj.html',tipodocs=tipodocs, localidades=localidades, categorias=categorias, sucursales=sucursales, provincias=provincias)
+        else:
+            return redirect(url_for('user'))
+    else:
+        return redirect(url_for("login"))
+
+
+@app.route('/grabarUsuario', methods=["POST"])
+def grabarUsuario():
+    if request.method == "POST":
+        datosUser = {}
+        datosUser['usuario'] = request.form['usuario']
+        datosUser['tipodoc'] = request.form['tipodoc']
+        datosUser['dni'] = request.form['dni']
+        datosUser['nombre'] = request.form['nombre']
+        datosUser['catego'] = request.form['catego']
+        datosUser['cargo'] = request.form['cargo']
+        datosUser['email'] = request.form['email']
+        datosUser['provincia'] = request.form['provincia']
+        datosUser['localidad'] = request.form['localidad']
+        datosUser['sucursal'] = request.form['sucursal']
+        datosUser['cpostal'] = request.form['cpostal']
+        datosUser['domicilio1'] = request.form['domicilio1']
+        datosUser['domicilio2'] = request.form['domicilio2']
+        datosUser['codarea'] = request.form['codarea']
+        datosUser['telefono'] = request.form['telefono']
+        datosUser['codarea1'] = request.form['codarea1']
+        datosUser['telefono1'] = request.form['telefono1']
+        datosUser['obs'] = request.form['obs']
+        datosUser['user_name'] = request.form['user_name']
+        datosUser['clave'] = request.form['clave']
+        if ((datosUser['usuario'] == '') or (datosUser['usuario'] == None)):
+            error = insert_usuario(datosUser)
+            if error == None:
+                flash('Se agregó el usuario', category='info')
+            return redirect(url_for('user'))
+        else:
+            error = update_user(datosUser, datosUser.get('usuario'))
+            if error == None:
+                flash('Se actualizó el usuario', category='info')
+            return redirect(url_for('user'))
+
+
+@app.route('/deleteUser')
+def deleteUser():
+    user = dict(session.get("user"))
+    uID = user.get('USUARIO')
+    if uID != None:
+        error = drop_user(uID)
+        if error == None:
+            flash('Se eliminó el usuario', category='info')
+            return redirect(url_for('user'))
+        else:
+            flash('Error al eliminar el usuario', category='error')
+            return redirect(url_for('user'))
+    else:
+        flash('Se debe seleccionar un usuario', category='error')
+        return redirect(url_for('user'))
 
 
 def query_string():

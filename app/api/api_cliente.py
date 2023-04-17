@@ -2,6 +2,17 @@ import requests
 from flask import session
 from db.db import get_db
 
+def get_provincias():
+    error = None
+    con, cur = get_db()
+    cur.execute("SELECT codprov, nombre FROM PROVINCIAS")
+    rows =cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error
+    
+
 def get_tipodoc():
     error = None
     con, cur = get_db()
