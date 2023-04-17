@@ -373,10 +373,10 @@ def deleteUser():
     if uID != None:
         error = drop_user(uID)
         if error == None:
-            flash('Se eliminó el usuario', category='info')
+            flash('Se inhabilitó el usuario', category='info')
             return redirect(url_for('user'))
         else:
-            flash('Error al eliminar el usuario', category='error')
+            flash('Error al inhabilitar el usuario', category='error')
             return redirect(url_for('user'))
     else:
         flash('Se debe seleccionar un usuario', category='error')

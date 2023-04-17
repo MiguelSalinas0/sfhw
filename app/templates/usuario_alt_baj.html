@@ -21,6 +21,11 @@
 <hr>
 
 <div class="container">
+    {% if session['user']['INHA'] == 1 %}
+                <div class="form-group col-md-6 mb-3">    
+                    <h3 class="col-6 row text-danger strong">Usuario inhabilitado</h3>
+                </div>
+    {% endif %}  
     <form action="grabarUsuario" method="post">
         <input type="hidden" name="usuario" id="usuario" value="{{session['user']['USUARIO']}}">
         <div class="mb-4 row">
@@ -211,7 +216,7 @@
                 <button type="submit" class="btn btn-primary">Grabar cambios</button>
             </div>
             <div class="offset-sm-1 col-sm-2 my-2">
-                <a class="btn btn-danger" href="{{ url_for('deleteUser') }}" role="button">Eliminar Usuario</a>
+                <a class="btn btn-danger" href="{{ url_for('deleteUser') }}" role="button">Inhabilitar Usuario</a>
             </div>
         </div>
     </form>

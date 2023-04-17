@@ -26,7 +26,7 @@ def get_usuario(usuario: str, clave: str):
 def get_user(iduser: str):
     error = None
     con, cur = get_db()
-    cur.execute('SELECT * FROM USUARIO WHERE USUARIO.USUARIO = ? AND USUARIO.INHA = 0', (iduser,))
+    cur.execute('SELECT * FROM USUARIO WHERE USUARIO.USUARIO = ?', (iduser,))
     user = cur.fetchone()
     if user == None:
         user = {}
