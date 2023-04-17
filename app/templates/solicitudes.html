@@ -3,6 +3,15 @@
 Solicitudes de Crédito
 {% endblock %}
 
+{% block algun_script %}
+    <script>
+        function autoRefresh() {
+            window.location = window.location.href;
+        }
+        setInterval('autoRefresh()', 10000);
+    </script>
+{% endblock %}    
+
 {% block body %}
 
 <div class="pt-4 pb-5">
@@ -14,6 +23,7 @@ Solicitudes de Crédito
                 <th>Sucursal</th>
                 <th>Total de Crédito</th>
                 <th>Fecha</th>
+                <th>Autoriza</th>
                 <th>Acción</th>
             </tr>
         </thead>
@@ -25,8 +35,13 @@ Solicitudes de Crédito
                     <td>{{solicitud.IDSUCURSAL}} - {{solicitud.SUCURSAL}}</td>
                     <td>$ {{solicitud.TOTAL}}</td>
                     <td>{{solicitud.FECHA}}</td>
+                    {% if solicitud.AUTORIZA == None %}
+                        <td> </td>
+                    {% else %}
+                        <td>{{solicitud.AUTORIZA}}</td>
+                    {% endif %}    
                     <td>
-                        <a href="{{ url_for('datos', id = solicitud.ID) }}" class="btn btn-success">Detalles</a>
+                        <a href="{{ url_for('datosCredito', id = solicitud.ID, estado = solicitud.ESTADO) }}" class="btn btn-success">Detalles</a>
                     </td>
                 </tr>
             {% endfor %}

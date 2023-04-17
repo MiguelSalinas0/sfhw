@@ -69,9 +69,20 @@ Nuevo crédito
                     </div>
                 </div>
                 <div class="justify-content-center align-items-center row my-2 pt-4">
+                    <label for="cuotas" class="col-1 col-form-label">Cuotas</label>
+                    <div class="col-4">
+                        <input type="text" name="cuotas" id="cuotas" class="form-control" onchange="calc_total()">
+                    </div>
                     <label for="vendedor" class="col-1 col-form-label">Vendedor</label>
                     <div class="col-4">
                         <input type="text" name="vendedor" id="vendedor" class="form-control">
+                    </div>
+                </div>
+                <div class="justify-content-center align-items-center row my-2 pt-4">
+                    <label for="total" class="col-1 col-form-label">Total</label>
+                    <label for="" id="tot" name="tot"></label>
+                    <div class="col-4">
+                        <input type="text" name="total" id="total" class="form-control">
                     </div>
                 </div>
                 <div class="d-flex justify-content-center pt-4 pb-4">
@@ -82,4 +93,11 @@ Nuevo crédito
     </div>
     <br>     
 
+    <script>
+        function calc_total() {
+            var x = document.getElementById("cuotas").value;
+            document.getElementById("total").innerHTML = x * 2;
+            document.getElementById("tot").innerHTML = x * 2;
+        }
+    </script>
 {% endblock %}

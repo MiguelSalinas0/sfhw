@@ -62,16 +62,31 @@ Solicitudes de Crédito
     </div>
     <div class="form-group col-md-4">
         <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Fecha de Nacimiento</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['FNACIM']}}">
+        </div>
+    </div>
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">Actividad</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['ACTIVIDAD']}}">
+        </div>
+    </div>
+</div>
+<div class="mb-3 row">
+    <div class="form-group col-md-4">
+        <div class="input-group mb-3">
             <span class="input-group-text" id="inputGroup-sizing-default">Trabajo</span>
             <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['TRABAJO']}}">
         </div>
     </div>
     <div class="form-group col-md-4">
         <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-default">Fecha de Nacimiento</span>
-            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['FNACIM']}}">
+            <span class="input-group-text" id="inputGroup-sizing-default">Cargo</span>
+            <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['CARGO']}}">
         </div>
     </div>
+    
 </div>
 
 <h3 class="pt-4 pb-4">Datos del Crédito</h3>
@@ -84,8 +99,8 @@ Solicitudes de Crédito
         </div>
         <div class="form-group col-md-4">
             <div class="input-group mb-3">
-                <span class="input-group-text" id="inputGroup-sizing-default">Total solicitado</span>
-                <input disabled type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['TOTAL']}}">
+                <span class="input-group-text text-bg-info fw-bold" id="inputGroup-sizing-default">Total solicitado</span>
+                <input disabled type="text" class="form-control text-bg-success" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="{{cliente['TOTAL']}}">
             </div>
         </div>
     </div>
@@ -120,5 +135,29 @@ Solicitudes de Crédito
 <h3 class="pt-4 pb-4">Datos Crediticios</h3>
 
 <h3 class="pt-4 pb-4">Historial Crediticio</h3>
+<div class="table-responsive-sm">
+    <table class="table table-info">
+        <thead>
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Mto. crédito</th>
+                <th scope="col">Pagos</th>
+                <th scope="col">Saldo venc.</th>
+                <th scope="col">Ctas impagas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for credito in creditos_otorgados %}
+                <tr class="">
+                    <td scope="row">{{credito.FECHA}}</td>
+                    <td>{{credito.DEBITO}}</td>
+                    <td>{{credito.TOTCAPITAL}}</td>
+                    <td>{{credito.SALDO_VENCIDO}}</td>
+                    <td>{{credito.CTAS_IMPAGAS}}</td>
+                </tr>
+            {% endfor %}    
+        </tbody>
+    </table>
+</div>
 
 {% endblock %}
