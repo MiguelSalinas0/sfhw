@@ -85,6 +85,7 @@ def logout():
     session.pop("usuario", None)
     session.pop("cliente", None)
     session.pop("items", None)
+    session.pop("mensajes", None)
     return redirect(url_for("login"))
 
 
@@ -681,6 +682,27 @@ def get_atraso_11():
         else:
             flash('No tiene autorización', category='error')
             return redirect(url_for('select_atraso_11'))        
+
+
+@app.route('/dat_credixsa')
+def dat_credixsa():
+    totalDeuda = 0.0
+    #nombre = session.get('cliente')['APELLIDO'] + ' ' + session.get('cliente')['NOMBRE']
+    #dni = session.get('cliente')['DNI']
+    nombre = 'SAAD YAMIL EZEQUIEL'
+    dni = '34846201'
+    data = consultar(nombre, dni)
+    #data = {}
+    totalDeuda = float(data.get('monto_adeudado_situaciones_1_vigentes')) + float(data.get('monto_adeudado_situaciones_2_vigentes')) + float(data.get('monto_adeudado_situaciones_3_vigentes')) + \
+        float(data.get('monto_adeudado_situaciones_4_vigentes')) + float(data.get('monto_adeudado_situaciones_5_vigentes')) + float(data.get('monto_adeudado_situaciones_6_vigentes'))
+    return render_template('datos_cre.html', data = data, totalDeuda = totalDeuda)
+
+
+@app.route('/reg_mensajes')
+def reg_mensajes():
+    msj_enviados = get_mensajes_WTS('+5492645139411', 1)
+    msj_recibidos = get_mensajes_WTS('+5492645139411', 2)
+    return render_template('reg_mensajes.html', msj_enviados = msj_enviados, msj_recibidos = msj_recibidos)
 
 
 def query_string():

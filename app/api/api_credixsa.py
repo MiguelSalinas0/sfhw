@@ -1,4 +1,5 @@
 import requests
+from db.db import get_db
 
 url = "https://webservice.credixsa.com/ws004.php"
 
@@ -202,3 +203,18 @@ def consultar(nombre: str, dni: str):
         "telefono_contacto_3": fields[182]
     }
     return data
+
+'''
+def reg_consulta(info_consulta: dict):
+    error = None
+    con, cur = get_db()
+    try:
+        cur.execute('INSERT INTO nombre_tabla () ' +
+                    'VALUES ()', (info_consulta.get('tipo')))
+        con.commit()
+    except Exception as E:
+        con.rollback()
+        print(f"Unexpected {E=}, {type(E)=}")
+        error = {'error': 'Error grabando registro de consulta: ' + str(E)}
+    return error
+'''
