@@ -2,6 +2,17 @@ import hashlib
 from db.db import get_db
 
 
+def get_all_user():
+    error = None
+    con, cur = get_db()
+    cur.execute('SELECT * FROM USUARIO WHERE USUARIO.INHA = 0')
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error
+
+
 def get_usuario(usuario: str, clave: str):
     error = None
     con, cur = get_db()
@@ -14,7 +25,7 @@ def get_usuario(usuario: str, clave: str):
     else:
         usuario = cur.to_dict(usuario)
         result = hashlib.sha384(bytes(clave, encoding='utf-8'))
-        if result.hexdigest() == usuario.get('PASSWORD'):
+        if result.hexdigest() == usuario.get('CLAVE'):
             con.commit()
             return {'USUARIO': usuario.get('USUARIO'), 'NOMBRE': usuario.get('NOMBRE')}, error
         else:
@@ -49,7 +60,7 @@ def insert_usuario(user_info: dict):
     indi = f'{indice:06d}'
     try:
         cur.execute('INSERT INTO USUARIO (USUARIO, NOMBRE, SUCURSAL, CATEGORIA, TDOC, DNI, CARGO, DOMICILIO1, ' +
-                    'DOMICILIO2, LOCALIDAD, CODPROV, CPOSTAL, TELEFONO, CODAREA, CODAREA1, TELEFONO1, EMAIL, OBS, "PASSWORD", INHA, N_USU_A, N_USU_M, NOMBRE_USR)' + 
+                    'DOMICILIO2, LOCALIDAD, CODPROV, CPOSTAL, TELEFONO, CODAREA, CODAREA1, TELEFONO1, EMAIL, OBS, CLAVE, INHA, N_USU_A, N_USU_M, NOMBRE_USR)' + 
                     'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', (indi,
                                                                                 user_info.get('nombre'),
                                                                                 user_info.get('sucursal'),
@@ -84,19 +95,19 @@ def insert_usuario(user_info: dict):
 def update_user(user_info: dict, id_user):
     error = None
     con, cur = get_db()
-    cur.execute('SELECT PASSWORD FROM USUARIO WHERE USUARIO = ?', (id_user,))
+    cur.execute('SELECT CLAVE FROM USUARIO WHERE USUARIO = ?', (id_user,))
     clave = cur.fetchone()
     clave = cur.to_dict(clave)
     if user_info.get('clave') == '':
-        user_info['clave'] = clave.get('PASSWORD')
-    elif clave.get('PASSWORD') == hashlib.sha384(bytes(user_info.get('clave'), encoding='utf-8')).hexdigest():
-        user_info['clave'] = clave.get('PASSWORD')
+        user_info['clave'] = clave.get('CLAVE')
+    elif clave.get('CLAVE') == hashlib.sha384(bytes(user_info.get('clave'), encoding='utf-8')).hexdigest():
+        user_info['clave'] = clave.get('CLAVE')
     else:
         user_info['clave'] = hashlib.sha384(bytes(user_info.get('clave'), encoding='utf-8')).hexdigest()
     try:
         cur.execute('UPDATE USUARIO SET NOMBRE = ?, SUCURSAL = ?, CATEGORIA = ?, TDOC = ?, DNI = ?, CARGO = ?, ' +
                     'DOMICILIO1 = ?, DOMICILIO2 = ?, LOCALIDAD = ?, CODPROV = ?, CPOSTAL = ?, TELEFONO = ?, CODAREA = ?, CODAREA1 = ?, TELEFONO1 = ?, EMAIL = ?, OBS = ?,' + 
-                    '"PASSWORD" = ?, INHA = ?, N_USU_A = ?, N_USU_M = ?, NOMBRE_USR = ?' +
+                    'CLAVE = ?, INHA = ?, N_USU_A = ?, N_USU_M = ?, NOMBRE_USR = ?' +
                     'WHERE USUARIO = ?',(user_info.get('nombre'),
                                         user_info.get('sucursal'),
                                         user_info.get('catego'),
@@ -139,3 +150,41 @@ def drop_user(id_user):
         print(f"Unexpected {E=}, {type(E)=}")
         error = {'error':'Error eliminando usuario: ' + str(E)}
     return error
+
+
+def get_rol(id_user):
+    error = None
+    con, cur = get_db()
+    cur.execute('select U.NOMBRE, UP.IDUSR, UP.IDPERFIL, UP.SISTEMA, P.ID, P.PERFIL ' +
+                'from perfiles P ' +
+                'left outer join USR_PERFIL UP on UP.IDPERFIL = P.ID and UP.IDUSR = ?' +
+                'left outer join usuario U on U.USUARIO = UP.IDUSR', (id_user,))
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error
+
+
+def get_menu(id_user):
+    error = None
+    con, cur = get_db()
+    cur.execute('SELECT M.NOMBRE FROM MENU M JOIN PERFILES P ON M.ID_P = P.ID ' +
+                'JOIN USR_PERFIL UP ON P.ID = UP.IDPERFIL WHERE UP.IDUSR = ?', (id_user,))
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error
+
+
+def eval_menu(rol_list: list, nom_menu: str):
+    bandera = False
+    indice = 0
+    while bandera == False and indice < len(rol_list):
+        if nom_menu.upper() == rol_list[indice]['NOMBRE']:
+            bandera = True
+        else:
+            indice = indice + 1
+    return bandera
+

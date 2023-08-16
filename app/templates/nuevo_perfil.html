@@ -1,0 +1,160 @@
+{% extends "layout.html" %}
+{% block titulo %} Perfiles {% endblock %}
+{% block body %}
+
+{% if op == '1' %}
+
+<div class="table-responsive-sm pt-5">
+    <table class="table table-primary">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for perfil in perfiles %}
+            <tr class="">
+                <td scope="row">{{perfil.ID}}</td>
+                <td>{{perfil.PERFIL}}</td>
+                <td>
+                    <form action="eliminar_perfil" method="post">
+                        <input type="hidden" name="ide" id="ide" value="{{perfil.ID}}">
+                        <button class="btn btn-danger" type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h4 class="pt-4">Agregar nuevo perfil</h4>
+
+<div class="pt-5"></div>
+
+<div class=".container border back">
+    <div class=".container-md justify-content-around align-items-center">
+        <form action="mod_perfil" method="POST">
+            <input type="hidden" name="option" value="{{op}}" id="">
+            <div class="justify-content-center row my-2">
+                <label for="name" class="col-4 col-form-label">Nombre del nuevo perfil</label>
+                <div class="col-4">
+                    <input type="text" name="name" id="name" class="form-control" required />
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endif %}
+
+{% if op == '2' %}
+
+<div class="pt-5"></div>
+
+<div class=".container border back">
+    <div class=".container-md justify-content-around align-items-center">
+        <form action="select_usr" method="POST">
+            <input type="hidden" name="option" value="{{op}}" id="">
+            <div class="justify-content-center row my-2">
+                <label for="usuario" class="col-4 col-form-label">Seleccione un Usuario</label>
+                <div class="col-4">
+                    <select name="usuario" id="usuario" class="form-control">
+                        {% for usuario in usuarios %}
+                        <option {% if usr==usuario.USUARIO %} selected {% endif %} value="{{ usuario.USUARIO }}">
+                            {{ usuario.NOMBRE }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary">Seleccionar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="form-group col-md-3 pt-5">
+    <label for="perfil" class="col-12 col-form-label">Perfiles Actuales:</label>
+    <form class="pt-4" method="POST" action="mod_perfil">
+        <input type="hidden" name="option" value="{{op}}" id="">
+        <input type="hidden" name="usuario" value="{{usr}}">
+        {% for up in us_per %}
+        <input type="checkbox" name="opciones" value="{{ up.ID }}" {% if usr==up.IDUSR %} checked {% endif %}>
+        {{up.PERFIL }} <br>
+        {% endfor %}
+        <div class="pt-4">
+            <button {% if bandera==False %} disabled {% endif %} class="btn btn-success"
+                type="submit">Actualizar</button>
+        </div>
+    </form>
+</div>
+
+{% endif %}
+
+{% if op == '3' %}
+
+<div class="table-responsive-sm pt-5">
+    <table class="table table-primary">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Nombre Perfil</th>
+                <th scope="col">Nombre Menu</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for menu in menus %}
+            <tr class="">
+                <td scope="row">{{menu.ID}}</td>
+                <td>{{menu.PERFIL}}</td>
+                <td>{{menu.NOMBRE}}</td>
+                <td>
+                    <form action="eliminar_menu" method="post">
+                        <input type="hidden" name="ide" id="ide" value="{{menu.ID}}">
+                        <button class="btn btn-danger" type="submit">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pt-5">
+    <div class=".container border back">
+        <form action="mod_perfil" method="POST">
+            <input type="hidden" name="option" value="{{op}}" id="">
+            <div class="justify-content-center row my-2">
+                <div class="col-md-4">
+                    <label for="perfil" class="form-label">Seleccione un perfil</label>
+                    <select name="perfil" id="perfil" class="form-control">
+                        {% for perfil in perfiles %}
+                        <option value="{{perfil.ID}}"> {{ perfil.PERFIL }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="menu" class="form-label">Nombre del nuevo menu</label>
+                    <input class="form-control" type="text" name="menu" id="menu" placeholder="Ingrese el nombre"
+                        required>
+                </div>
+                <div class="col-md-2 row my-4">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

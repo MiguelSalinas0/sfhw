@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block titulo %} Aviso {% endblock %}
+{% block body %}
+
+<div class="container pt-4">
+    <form action="get_atraso" method="POST" class="d-flex justify-content-center justify-content-evenly">
+        <div class="form-group">
+            <select class="form-select" aria-label="Default select example" id="infoSel" name="infoSel">
+                <option value="">Seleccione la cantidad de días de atraso</option>
+                <option value="3" {% if op=='3' %} selected {% endif %}>3 días</option>
+                <option value="5" {% if op=='5' %} selected {% endif %}>5 días</option>
+                <option value="9" {% if op=='9' %} selected {% endif %}>9 días</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">Seleccionar</button>
+        </div>
+    </form>
+</div>
+
+{{creditosVencidos}}
+
+<div class="table-responsive-sm pt-5">
+    <table class="table table-primary">
+        <thead>
+            <tr>
+                <th scope="col">IDVENCIM</th>
+                <th scope="col">CLIEN</th>
+                <th scope="col">APELLIDO, NOMBRE</th>
+                <th scope="col">CELULAR</th>
+                <th scope="col">LOCALIDAD</th>
+                <th scope="col">CUOTAS IMPAGAS</th>
+                <th scope="col">DEUDA VENCIDA</th>
+                <th scope="col">VTO</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for credito in creditosVencidos %}
+            {% if credito.APENOM != None %}
+            <tr class="">
+                <td scope="row">{{credito.IDVENCIM}}</td>
+                <td>{{credito.CLIEN}}</td>
+                <td>{{credito.APENOM}}</td>
+                <td>{{credito.TELEFONO_CELULAR}}</td>
+                <td>{{credito.LOCALIDAD}}</td>
+                <td>{{credito.CUOTAS_IMPAGAS}}</td>
+                <td>$ {{credito.DEUDA_VENCIDA}}</td>
+                <td>{{credito.VTO.strftime('%d/%m/%Y')}}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

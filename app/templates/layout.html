@@ -36,8 +36,14 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/">Inicio</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/cliente">Cliente</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">Cliente</a>
+            <ul class="dropdown-menu dropdown-menu-sm-start">
+              <li><a class="dropdown-item" href="{{ url_for('cliente') }}">Gestión de clientes</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('dias_3') }}">Aviso 3 días antes</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('select_atraso') }}">Avisos atrasados hasta 9 días</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('select_atraso_11') }}">Avisos atrasados desde 11 días</a></li>
+            </ul>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">Créditos</a>
@@ -48,6 +54,14 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/user">Modificar Usuarios</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">Perfiles</a>
+            <ul class="dropdown-menu dropdown-menu-sm-start">
+              <li><a class="dropdown-item" href="{{ url_for('nuevo_perfil', op = 1) }}">Perfiles</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('nuevo_perfil', op = 2) }}">Gestión de perfiles</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('nuevo_perfil', op = 3) }}">Menús</a></li>
+            </ul>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Salir</a>

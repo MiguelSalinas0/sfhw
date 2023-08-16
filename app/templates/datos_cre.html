@@ -1,0 +1,204 @@
+{% extends "layout.html" %}
+{% block titulo %} Aviso {% endblock %}
+{% block body %}
+
+<h4 class="pt-5">Datos Filiatorios</h4>
+
+<div class="row pt-5 container d-flex justify-content-between">
+    <div class="col-md-2 d-flex justify-content-center">
+        <img src="/static/img/{{data.resultado}}.png" alt="">
+    </div>
+    <div class="col-md-2 d-flex justify-content-center align-items-center">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">CUIL</span>
+            <input disabled type="text" class="form-control" value="{{data.cuil}}">
+        </div>
+    </div>
+    <div class="col-md-2 d-flex justify-content-center align-items-center">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">DNI</span>
+            <input disabled type="text" class="form-control" value="{{data.dni}}">
+        </div>
+    </div>
+    <div class="col-md-2 d-flex justify-content-center align-items-center">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Sexo</span>
+            <input disabled type="text" class="form-control" value="{{data.sexo}}">
+        </div>
+    </div>
+    <div class="col-md-3 d-flex justify-content-center align-items-center">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Fecha Nacimiento</span>
+            <input disabled type="text" class="form-control" value="{{data.fecha_nacimiento}}">
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Apellido y Nombre</span>
+                <input disabled type="text" class="form-control" value="{{data.nombre_}}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Domicilio Personal</span>
+                <input disabled type="text" class="form-control" value="{{data.domicilio_personal}}">
+            </div>
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col-md-12">
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroup-sizing-default">Observaciones</span>
+                <input disabled type="text" class="form-control" value="{{data.observaciones}}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="pt-5">Datos Fiscales</h4>
+
+<div class="mb-3 row pt-5">
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Cuit/Cuil</span>
+            <input disabled type="text" class="form-control" value="{{data.cuit}}">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Categoría Monotributo</span>
+            <input disabled type="text" class="form-control" value="{{data.categoria_monotributo}}">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">CP Fiscal</span>
+            <input disabled type="text" class="form-control" value="{{data.cp_fiscal}}">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Integra Sociedades</span>
+            <input disabled type="text" class="form-control" value="{{data.integra_sociedades}}">
+        </div>
+    </div>
+</div>
+
+<div class="mb-3 row pt-4">
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Empleador</span>
+            <input disabled type="text" class="form-control" value="{{data.empleador}}">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Fecha Inicio</span>
+            <input disabled type="text" class="form-control" value="{{data.fecha_inicio_actividades}}">
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Imp Ganancias</span>
+            {% if data.imp_ganancias == 'NI' %}
+                <input disabled type="text" class="form-control" value="No Inscripto">
+            {% endif %}
+            {% if data.imp_ganancias == 'AC' %}
+                <input disabled type="text" class="form-control" value="Activo">
+            {% endif %}
+            {% if data.imp_ganancias == 'EX' %}
+                <input disabled type="text" class="form-control" value="Exento">
+            {% endif %}
+            {% if data.imp_ganancias == 'NC' %}
+                <input disabled type="text" class="form-control" value="No Corresponde">
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Imp IVA</span>
+            {% if data.imp_iva == 'NI' %}
+                <input disabled type="text" class="form-control" value="No Inscripto">
+            {% endif %}
+            {% if data.imp_iva == 'AC' %}
+                <input disabled type="text" class="form-control" value="Activo">
+            {% endif %}
+            {% if data.imp_iva == 'EX' %}
+                <input disabled type="text" class="form-control" value="Exento">
+            {% endif %}
+            {% if data.imp_iva == 'NA' %}
+                <input disabled type="text" class="form-control" value="No Alcanzado">
+            {% endif %}
+            {% if data.imp_iva == 'XN' %}
+                <input disabled type="text" class="form-control" value="Exento No Alcanzado">
+            {% endif %}
+            {% if data.imp_iva == 'AN' %}
+                <input disabled type="text" class="form-control" value="Activo No Alcanzado">
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="mb-3 row pt-4">
+    <div class="form-group col-md-6">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Actividades</span>
+            <input disabled type="text" class="form-control" value="{{data.actividad_principal_afip}}">
+        </div>
+    </div>
+    <div class="form-group col-md-6">
+        <div class="input-group">
+            <span class="input-group-text" id="inputGroup-sizing-default">Domicilio Fiscal </span>
+            <input disabled type="text" class="form-control" value="{{data.domicilio_fiscal}}">
+        </div>
+    </div>
+</div>
+
+<h4 class="pt-5">Deudas Vigentes Sistema Financiero</h4>
+
+<div class="table-responsive-sm pt-5">
+    <table class="table table-info">
+        <thead>
+            <tr>
+                <th scope="col">Situación</th>
+                <th scope="col">Monto ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>En situación normal/Cumplimiento normal</td>
+                <td>$ {{data.monto_adeudado_situaciones_1_vigentes}}</td>
+            </tr>
+            <tr>
+                <td>Con riesgo potencial/Cumplimiento inadecuado</td>
+                <td>$ {{data.monto_adeudado_situaciones_2_vigentes}}</td>
+            </tr>
+            <tr>
+                <td>Con problemas/Cumplimiento deficiente</td>
+                <td>$ {{data.monto_adeudado_situaciones_3_vigentes}}</td>
+            </tr>
+            <tr>
+                <td>Con altoriesgo de insolvencia/De difícil recuperación</td>
+                <td>$ {{data.monto_adeudado_situaciones_4_vigentes}}</td>
+            </tr>
+            <tr>
+                <td>Irrecuperable</td>
+                <td>$ {{data.monto_adeudado_situaciones_5_vigentes}}</td>
+            </tr>
+            <tr>
+                <td>Irrecuperable por disposición técnica, N/D: No disponible</td>
+                <td>$ {{data.monto_adeudado_situaciones_6_vigentes}}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>TOTAL Deudas Vigentes</th>
+                <th>$ {{totalDeuda}}</th>
+            </tr>
+
+        </tfoot>
+    </table>
+</div>
+
+{% endblock %}
