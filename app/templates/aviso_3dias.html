@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block titulo %} Aviso {% endblock %}
+{% block title %} Aviso {% endblock %}
 {% block body %}
 
 {{creditosAvencer}}
@@ -20,7 +20,7 @@
         </thead>
         <tbody>
             {% for credito in creditosAvencer %}
-            {% if credito.CLIEN != None %}
+            {% if credito.APENOM != None %}
             <tr class="">
                 <td scope="row">{{credito.IDVENCIM}}</td>
                 <td>{{credito.CLIEN}}</td>

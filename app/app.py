@@ -1,5 +1,8 @@
+import json
+import pytz
 import requests
-from flask import (Flask, render_template, url_for, request, redirect, session, flash)
+import re
+from flask import (Flask, jsonify, render_template, url_for, request, redirect, session, flash)
 from datetime import datetime, timedelta
 from api.api_cliente import *
 from api.api_credito import *
@@ -7,8 +10,10 @@ from api.api_usuario import *
 from api.api_perfil import *
 from api.api_mensajes import *
 from api.api_credixsa import *
+from api.api_excel import *
 from db.db import get_db, init_app
 
+from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 app.secret_key = "ffgghhllmm"
@@ -587,6 +592,7 @@ def dias_3():
         for credito in creditosAvencer:
             if credito['TELEFONO_CELULAR'] != None and credito['APENOM'] != None:
                 info_msj = {}
+                info_msj['tipo'] = 1
                 '''invento para saber si se le envia whatsapp o sms
                 if credito['METHOD'] == 'wts': 
                     info_msj['tipo'] = 1
@@ -594,13 +600,31 @@ def dias_3():
                     info_msj['tipo'] = 0
                 '''
                 info_msj['idvencim'] = credito['IDVENCIM']
-                info_msj['mensaje'] = 'Aviso de vencimiento de cuota, 3 días antes del vencimiento'
-                info_msj['fecha'] = datetime.now().strftime('%d/%m/%Y')
+                info_msj['fecha'] = datetime.now().strftime('%Y/%m/%d')
                 info_msj['sucursal'] = '0000'
                 info_msj['clien'] = credito['CLIEN']
                 info_msj['tel'] =  str(credito['TELEFONO_CELULAR'])
-                mensaje = str(mensaje['DETALLE']).replace('%apellido+nombre%', str(credito['APENOM']).strip()).replace('%vto%', str(credito['VTO'].strftime('%d/%m/%Y')))
-                #guardar_mensaje(info_msj, mensaje)
+                msj = str(mensaje['DETALLE']).replace('%apellido+nombre%', str(credito['APENOM']).strip()).replace('%vto%', str(credito['VTO'].strftime('%d/%m/%Y')))
+                if re.match(expresion_regular, info_msj.get('tel')):
+                    info_msj['mensaje'] = 'Aviso de vencimiento de cuota, 3 días antes del vencimiento'
+                    guardar_mensaje(info_msj, msj)
+                elif info_msj.get('tel') == '':
+                    info_msj['mensaje'] = 'Cliente sin número de teléfono'
+                    registrar_mensajes(info_msj)
+                else:
+                    info_msj['mensaje'] = 'Número de teléfono mal formado'
+                    registrar_mensajes(info_msj)
+                '''
+                data, error = get_numbers(credito['CLIEN'])
+                if error == None:
+                    for clave, valor in data[0].items():
+                        num = valor.replace(' ', '')
+                        if num != '':
+                            if re.match(expresion_regular, num):
+                                info_msj['mensaje'] = 'Aviso de vencimiento de cuota, 3 días antes del vencimiento'
+                                info_msj['tel'] = num
+                                guardar_mensaje(info_msj, msj)
+                '''
         if error == None:
             return render_template('aviso_3dias.html', creditosAvencer=creditosAvencer, mensaje=mensaje)
     else:
@@ -608,80 +632,59 @@ def dias_3():
         return redirect(url_for('usuario'))
 
 
-@app.route('/select_atraso')
-def select_atraso():
-    return render_template('aviso_atrasado.html')
+@app.route('/select_atraso/<op>')
+def select_atraso(op):
+    op = int(op)
+    #sucursales, error = get_sucursales()
+    if op == 1:
+        return render_template('aviso_atrasado.html', opv=op)
+    else:
+        return render_template('aviso_atrasado.html', opv=op)
 
 
 @app.route('/get_atraso', methods=["POST", "GET"])
 def get_atraso():
     if request.method == 'POST':
         op = request.form['infoSel']
+        #sucursal = request.form['sucursal']
+        opv = int(request.form['opv'])
+        bandera = False
+        #sucursales, error = get_sucursales()
+        #evaluar_numeros_secundarios = True if 'eval' in request.form else False
         if eval_menu(session.get('menu'), 'sistema'):
             if op == '':
-                return render_template('aviso_atrasado.html') 
-            if op == '3':
-                mensaje, error = get_mensaje(-3)
-                fecha_pasada = datetime.now() + timedelta(days=-3)
-                creditosVencidos, error = get_creditos_vencidos(fecha_pasada)
-                crear_mensajes(creditosVencidos, mensaje, 3)
+                return render_template('aviso_atrasado.html', opv=opv, op=op)
+            else:
+                fecha_pasada = datetime.now() + timedelta(days=-int(op))
+                creditos_una_cta_venc, error = get_creditos_una_cta_venc(fecha_pasada)
                 if error == None:
-                    return render_template('aviso_atrasado.html', op=op, creditosVencidos=creditosVencidos)
-            if op == '5':
-                mensaje, error = get_mensaje(-5)
-                fecha_pasada = datetime.now() + timedelta(days=-5)
-                creditosVencidos, error = get_creditos_vencidos(fecha_pasada)
-                crear_mensajes(creditosVencidos, mensaje, 5)
-                if error == None:
-                    return render_template('aviso_atrasado.html', op=op, creditosVencidos=creditosVencidos)
-            if op == '9':
-                mensaje, error = get_mensaje(-9)
-                fecha_pasada = datetime.now() + timedelta(days=-9)
-                creditosVencidos, error = get_creditos_vencidos(fecha_pasada)
-                crear_mensajes(creditosVencidos, mensaje, 9)
-                if error == None:
-                    return render_template('aviso_atrasado.html', op=op, creditosVencidos=creditosVencidos)
+                    tot = 0.0
+                    if creditos_una_cta_venc != []:
+                        bandera = True
+                        for cred in creditos_una_cta_venc:
+                            tot += float(cred['DEUDA_VENCIDA'])
+                    long = len(creditos_una_cta_venc)
+                    return render_template('aviso_atrasado.html', opv=opv, op=op, creditosVencidos=creditos_una_cta_venc, bandera=bandera, long=long, tot=tot)
         else:
             flash('No tiene autorización', category='error')
-            return redirect(url_for('select_atraso'))
+            return redirect(url_for('index'))
 
 
-@app.route('/select_atraso_11')
-def select_atraso_11():
-    return render_template('aviso_atrasado_11.html')
-
-
-@app.route('/get_atraso_11', methods=["POST", "GET"])
-def get_atraso_11():
+@app.route('/enviar_msj', methods=["POST", "GET"])
+def enviar_msj():
     if request.method == 'POST':
-        op = request.form['infoSel']
-        if eval_menu(session.get('menu'), 'sistema'):
-            if op == '':
-                return render_template('aviso_atrasado_11.html')
-            if op == '11':
-                mensaje, error = get_mensaje(-11)
-                fecha_pasada = datetime.now() + timedelta(days=-11)
-                creditosVencidos, error = get_creditos_vencidos(fecha_pasada)
-                crear_mensajes(creditosVencidos, mensaje, 11)
-                if error == None:
-                    return render_template('aviso_atrasado_11.html', op=op, creditosVencidos=creditosVencidos)
-            if op == '31':
-                mensaje, error = get_mensaje(-31)
-                fecha_pasada = datetime.now() + timedelta(days=-31)
-                creditosVencidos, error = get_creditos_vencidos(fecha_pasada)
-                crear_mensajes(creditosVencidos, mensaje, 31)
-                if error == None:
-                    return render_template('aviso_atrasado_11.html', op=op, creditosVencidos=creditosVencidos)
-            if op == '90':
-                mensaje, error = get_mensaje(-90)
-                fecha_pasada = datetime.now() + timedelta(days=-90)
-                creditosVencidos, error = get_creditos_vencidos(fecha_pasada)
-                crear_mensajes(creditosVencidos, mensaje, 90)
-                if error == None:
-                    return render_template('aviso_atrasado_11.html', op=op, creditosVencidos=creditosVencidos)
-        else:
-            flash('No tiene autorización', category='error')
-            return redirect(url_for('select_atraso_11'))        
+        op = request.form['op']
+        opv = int(request.form['opv'])
+        #evaluar_numeros_secundarios = request.form['evaluar_numeros_secundarios']
+        #sucursal = request.form['sucursal']
+        mensaje, error = get_mensaje(-int(op))
+        fecha_pasada = datetime.now() + timedelta(days=-int(op))
+        creditos_una_cta_venc, error = get_creditos_una_cta_venc(fecha_pasada)
+        if error == None:
+            if creditos_una_cta_venc != []:
+                crear_mensajes(creditos_una_cta_venc, mensaje, int(op))
+                flash('Mensajes enviados', category='success')
+                return render_template('aviso_atrasado.html', opv=opv)
 
 
 @app.route('/dat_credixsa')
@@ -700,6 +703,7 @@ def dat_credixsa():
 
 @app.route('/reg_mensajes')
 def reg_mensajes():
+    update_mensajes()
     msj_enviados = get_mensajes_WTS('+5492645139411', 1)
     msj_recibidos = get_mensajes_WTS('+5492645139411', 2)
     return render_template('reg_mensajes.html', msj_enviados = msj_enviados, msj_recibidos = msj_recibidos)
@@ -718,6 +722,199 @@ def pagina_no_encontrada(error):
     }
     return render_template('404.html', data=data), 404
     # return redirect(url_for('index'))
+
+
+
+
+
+
+
+
+
+
+
+
+# @app.route('/webhook', methods=['POST'])
+# def webhook():
+#     if request.method == 'POST':
+#         data = request.form
+#         # message_body = data.get('Body', '')
+#         number_from = data.get('From', '').split(':')
+#         mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
+#         mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
+#         men = mensajes_recibidos + mensajes_enviados
+#         max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
+#         mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
+#         print(mensss)
+#         # print(message_body)
+#         # print(data)
+#         cli, error = get_cli_con_num(number_from[1])
+#         if error == None:
+#             flash(f'nuevo mensaje',category='info')
+#             return render_template('chat.html')
+
+
+# @app.route('/webhook', methods=['POST'])
+# def webhook():
+#     # Validar la firma de la solicitud
+#     validator = RequestValidator('ad1ef7bf371bbc92f7fad8ac2b9b4b96')
+#     if validator.validate(request.url, request.form, request.headers.get('X-Twilio-Signature', '')):
+#         # La solicitud es válida, procesar el evento
+#         data = request.form
+#         event_type = data.get('EventType', '')
+
+#         # Procesar el evento según sea necesario
+#         if event_type == 'onMessageAdded':
+#             message_body = data.get('Body', '')
+#             conversation_sid = data.get('ConversationSid', '')
+#             source = data.get('Source', '')
+
+#             # Verificar si el mensaje proviene de WhatsApp
+#             if source == 'whatsapp':
+#                 # Procesar el mensaje de WhatsApp
+#                 print(f"Mensaje de WhatsApp recibido en la conversación {conversation_sid}: {message_body}")
+
+#                 # Puedes realizar acciones específicas para mensajes de WhatsApp aquí
+
+#         return redirect(url_for('index'))
+#     else:
+#         # La solicitud no es válida
+#         return redirect(url_for('index'))
+
+
+
+
+
+
+
+opciones = {
+    'inicio': {
+        'mensaje': '¡Bienvenido! ¿Qué opción te gustaría elegir?\n'
+               '1. Opción 1\n'
+               '2. Opción 2\n'
+               '3. Salir',
+        'opciones': ['opción 1', 'opción 2', 'salir'],
+    },
+    'opción 1': {
+        'mensaje': 'Has elegido la opción 1. ¿Quieres hacer algo más?',
+        'opciones': ['opción 1.1', 'opción 1.2', 'volver'],
+    },
+    'opción 1.1': {
+        'mensaje': 'Has elegido la subopción 1.1. ¿Quieres hacer algo más?',
+        'opciones': ['volver'],
+    },
+    'opción 1.2': {
+        'mensaje': 'Has elegido la subopción 1.2. ¿Quieres hacer algo más?',
+        'opciones': ['volver'],
+    },
+    'opción 2': {
+        'mensaje': 'Has elegido la opción 2. ¿Quieres hacer algo más?',
+        'opciones': ['volver'],
+    },
+    'salir': {
+        'mensaje': 'Gracias por usar nuestro servicio. ¡Hasta luego!',
+        'opciones': [],
+    },
+    'volver': {
+        'mensaje': 'Volviendo al menú anterior. ¿Qué opción te gustaría elegir?',
+        'opciones': ['opción 1', 'opción 2', 'salir'],
+    }
+}
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        data = request.form
+        message_body = data.get('Body', '')
+        number_from = data.get('From', '')
+        response = MessagingResponse()
+        if number_from not in session:
+            session[number_from] = 'inicio'
+            response.message(opciones[session[number_from]]['mensaje'])
+        current_option = session[number_from]
+        if message_body.lower() == 'salir':
+            del session[number_from]
+            response.message(opciones[message_body.lower()]['mensaje'])
+        if message_body.lower() == 'volver':
+            response.message(opciones[message_body.lower()]['mensaje'])
+            session[number_from] = message_body.lower()
+        else:
+            if message_body.lower() in opciones[current_option]['opciones']:
+                current_option = message_body.lower()
+                session[number_from] = current_option
+                if current_option == 'opción 1':
+                    resultado = metodo_opcion1()
+                    response.message(resultado)
+                    response.message(opciones[current_option]['mensaje'])
+        return str(response)
+
+
+
+        # mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
+        # mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
+        # men = mensajes_recibidos + mensajes_enviados
+        # max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
+        # mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
+        # cli, error = get_cli_con_num(number_from[1])
+        # if message_body.lower() == 'salir':
+        #     del session[number_from]
+        # else:
+        #     if message_body.lower() in opciones[current_option]['opciones']:
+        #         current_option = message_body.lower()
+        # response.message(opciones[current_option]['mensaje'])
+        # session[number_from] = current_option
+        # return str(response)
+
+
+
+
+
+
+@app.route('/procesar_formulario', methods=['POST'])
+def procesar_formulario():
+    dni = request.form.get('dni')
+    cliente, error = get_cliente(dni)
+    if error:
+        resultado_html = f"<p>{error.get('error')}" + "</p>"
+        return jsonify({'resultado': resultado_html})
+    else:
+        resultado_html = "<p>Apellido: " + cliente.get('APELLIDO') + "</p>" + "<p>Nombre: " + cliente.get('NOMBRE') + "</p>"
+        return jsonify({'resultado': resultado_html})
+
+
+
+
+
+
+
+
+
+
+@app.route('/ejemplo_list_excel')
+def ejemplo_list_excel():
+    listaD = [
+        {"DNI": "12345678", "Apellido": "Gomez", "Domicilio": "Calle 123", "Telefono": "555-1234"},
+        {"DNI": "87654321", "Apellido": "Perez", "Domicilio": "Avenida 456", "Telefono": "555-5678"},
+        {"DNI": "87654321", "Apellido": "Ramírez", "Domicilio": "Calle 567", "Telefono": "555-8765"},
+        {"DNI": "23456789", "Apellido": "González", "Domicilio": "Avenida 654", "Telefono": "555-2345"},
+        {"DNI": "34567890", "Apellido": "López", "Domicilio": "Calle 456", "Telefono": "555-3456"},
+        {"DNI": "54321678", "Apellido": "Rodríguez", "Domicilio": "Avenida 987", "Telefono": "555-5432"},
+        {"DNI": "98765432", "Apellido": "Martínez", "Domicilio": "Calle 789", "Telefono": "555-9876"}
+    ]
+    return render_template('ejemplo_list_excel.html', listaD=listaD)
+
+@app.route('/procesar_exc', methods=['POST'])
+def procesar_exc():
+    listaD = [json.loads(perfil) for perfil in request.form.getlist('listaD[]')]
+    seleccionados = [json.loads(select) for select in request.form.getlist('seleccionados[]')]
+    elementos_no_seleccionados = [elem for elem in listaD if elem not in seleccionados]
+
+    # print(listaD)
+    # print(seleccionados)
+    print(elementos_no_seleccionados)
+    # generar_credixsa(elementos_no_seleccionados)
+    flash('Datos recibidos y procesados', category='info')
+    return render_template('ejemplo_list_excel.html', listaD=listaD)
+
 
 
 if __name__ == '__main__':

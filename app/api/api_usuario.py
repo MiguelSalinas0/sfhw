@@ -10,6 +10,7 @@ def get_all_user():
     data = []
     for row in rows:
         data.append(cur.to_dict(row))
+    con.commit()
     return data, error
 
 
@@ -181,10 +182,10 @@ def get_menu(id_user):
 def eval_menu(rol_list: list, nom_menu: str):
     bandera = False
     indice = 0
-    while bandera == False and indice < len(rol_list):
-        if nom_menu.upper() == rol_list[indice]['NOMBRE']:
+    while not bandera and indice < len(rol_list):
+        if nom_menu.upper() == rol_list[indice]['NOMBRE'].upper():
             bandera = True
         else:
-            indice = indice + 1
+            indice += 1
     return bandera
 

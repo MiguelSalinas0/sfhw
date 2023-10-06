@@ -140,6 +140,7 @@ def insert_cliente(datosCliente):
     error = None
     return datosCliente, error
 
+
 def update_cliente(datosCliente):
     error = None
     print('categoria')
@@ -164,3 +165,16 @@ def update_cliente(datosCliente):
         con.rollback()
         error = {'error':'Error actualizando cliente: ' + str(E)}    
     return datosCliente, error
+
+
+def get_cli_con_num(numero: str):
+    codigo_area = f"%{numero[4:7]}%"
+    numero = numero[7:]
+    error = None
+    con, cur = get_db()
+    cur.execute("SELECT * FROM CLIENTES c WHERE (TRIM(c.CODAREA) LIKE ? and TRIM(c.TELEFONO) = ?)", (codigo_area, numero,))
+    row = cur.fetchone()
+    if row == None:
+        error = {'error': f'No hay datos de cliente para el número: {numero}'}
+        return {}, error
+    return cur.to_dict(row), error

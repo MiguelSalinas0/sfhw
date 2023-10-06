@@ -6,7 +6,7 @@ window.addEventListener("DOMContentLoaded", function () {
             decimal: ",",
             emptyTable: "No hay información",
             info: "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-            infoEmpty: "Mostrando 0 to 0 of 0 Entradas",
+            infoEmpty: "Mostrando 0 to 0 de 0 Entradas",
             infoFiltered: "(Filtrado de _MAX_ entradas totales)",
             infoPostFix: "",
             thousands: ".",

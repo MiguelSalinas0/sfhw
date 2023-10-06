@@ -22,8 +22,8 @@ def insert_perfil(name: str):
     indice = f'{indice:05d}'
     name = name.upper()
     try:
-        cur.execute("INSERT INTO PERFILES (ID, PERFIL) VALUES (?,?)",
-                    (indice, name,))
+        cur.execute("INSERT INTO PERFILES (ID, PERFIL, NCAMBIO) VALUES (?,?,?)",
+                    (indice, name, 0,))
         con.commit()
     except Exception as E:
         con.rollback()
@@ -37,8 +37,8 @@ def insert_usr_perfil(rolesAsignar: list, rolesQuitar: list, usr: str):
     con, cur = get_db()
     for rol in rolesAsignar:
         try:
-            cur.execute("INSERT INTO USR_PERFIL (IDUSR, IDPERFIL, SISTEMA) VALUES (?,?,?)",
-                        (usr, rol['ID'], 1))
+            cur.execute("INSERT INTO USR_PERFIL (IDUSR, IDPERFIL, NCAMBIO, SISTEMA) VALUES (?,?,?,?)",
+                        (usr, rol['ID'], 0, 1))
             con.commit()
         except Exception as E:
             con.rollback()

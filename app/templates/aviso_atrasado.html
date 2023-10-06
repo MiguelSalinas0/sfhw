@@ -1,56 +1,96 @@
 {% extends "layout.html" %}
-{% block titulo %} Aviso {% endblock %}
+{% block title %} Aviso {% endblock %}
 {% block body %}
 
 <div class="container pt-4">
-    <form action="get_atraso" method="POST" class="d-flex justify-content-center justify-content-evenly">
+    <form action="{{ url_for('get_atraso') }}" method="POST" class="d-flex justify-content-center justify-content-evenly">
+        <input type="hidden" name="opv" id="opv" value="{{opv}}">
         <div class="form-group">
             <select class="form-select" aria-label="Default select example" id="infoSel" name="infoSel">
+                {% if opv == 1 %}
                 <option value="">Seleccione la cantidad de días de atraso</option>
                 <option value="3" {% if op=='3' %} selected {% endif %}>3 días</option>
                 <option value="5" {% if op=='5' %} selected {% endif %}>5 días</option>
                 <option value="9" {% if op=='9' %} selected {% endif %}>9 días</option>
+                {% endif %}
+                {% if opv == 2 %}
+                <option value="">Seleccione la cantidad de días de atraso</option>
+                <option value="11" {% if op=='11' %} selected {% endif %}>11 días</option>
+                {% endif %}
             </select>
         </div>
+        <!-- <div class="form-group d-flex align-items-center">
+            <input type="checkbox" name="eval" id="eval" {% if evaluar_numeros_secundarios==True %} checked {% endif %}>
+            <label for="eval">Evaluar números secundarios</label>
+        </div> 
+        <div class="form-group">
+            <select name="sucursal" id="sucursal" class="form-control">
+                <option value="0000">Todas las sucursales</option>
+                {% for suc in sucursales %}
+                <option value="{{ suc.SUCURSAL }}" {% if suc.SUCURSAL == sucursal %}selected{% endif %}>
+                    {{ suc.NOMBRE }}
+                </option>
+                {% endfor %}
+            </select>
+        </div> -->
         <div class="form-group">
             <button type="submit" class="btn btn-success">Seleccionar</button>
         </div>
     </form>
 </div>
 
-{{creditosVencidos}}
-
-<div class="table-responsive-sm pt-5">
-    <table class="table table-primary">
-        <thead>
-            <tr>
-                <th scope="col">IDVENCIM</th>
-                <th scope="col">CLIEN</th>
-                <th scope="col">APELLIDO, NOMBRE</th>
-                <th scope="col">CELULAR</th>
-                <th scope="col">LOCALIDAD</th>
-                <th scope="col">CUOTAS IMPAGAS</th>
-                <th scope="col">DEUDA VENCIDA</th>
-                <th scope="col">VTO</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for credito in creditosVencidos %}
-            {% if credito.APENOM != None %}
-            <tr class="">
-                <td scope="row">{{credito.IDVENCIM}}</td>
-                <td>{{credito.CLIEN}}</td>
-                <td>{{credito.APENOM}}</td>
-                <td>{{credito.TELEFONO_CELULAR}}</td>
-                <td>{{credito.LOCALIDAD}}</td>
-                <td>{{credito.CUOTAS_IMPAGAS}}</td>
-                <td>$ {{credito.DEUDA_VENCIDA}}</td>
-                <td>{{credito.VTO.strftime('%d/%m/%Y')}}</td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="pt-4">
+    <h6><strong>Cantidad de mensajes a enviar: {{long}}</strong></h6>
 </div>
+
+<form action="enviar_msj" method="POST">
+    <!-- <input type="hidden" name="sucursal" id="sucursal" value="{{sucursal}}"> -->
+    <!-- <input type="hidden" name="evaluar_numeros_secundarios" id="evaluar_numeros_secundarios" value="{{evaluar_numeros_secundarios}}"> -->
+    <input type="hidden" name="op" id="op" value="{{op}}">
+    <input type="hidden" name="opv" id="opv" value="{{opv}}">
+    <div class="table-responsive-sm pt-5">
+        <table id="tab2" class="table table-primary">
+            <thead>
+                <tr>
+                    <th scope="col">IDVENCIM</th>
+                    <th scope="col">CLIEN</th>
+                    <th scope="col">APELLIDO, NOMBRE</th>
+                    <th scope="col">CELULAR</th>
+                    <th scope="col">LOCALIDAD</th>
+                    <th scope="col">CUOTAS IMPAGAS</th>
+                    <th scope="col">DEUDA VENCIDA</th>
+                    <th scope="col">VTO</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for credito in creditosVencidos %}
+                {% if credito.APENOM != None %}
+                <tr class="">
+                    <td scope="row">{{credito.IDVENCIM}}</td>
+                    <td>{{credito.CLIEN}}</td>
+                    <td>{{credito.APENOM}}</td>
+                    <td>{{credito.TELEFONO_CELULAR}}</td>
+                    <td>{{credito.LOCALIDAD}}</td>
+                    <td>{{credito.CUOTAS_IMPAGAS}}</td>
+                    <td>$ {{credito.DEUDA_VENCIDA}}</td>
+                    <td>{{credito.VTO.strftime('%d/%m/%Y')}}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="1"><strong>Total</strong></td>
+                    <td><strong>${{tot}}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% if bandera == True %}
+    <div class="d-flex justify-content-end py-5">
+        <button class="btn btn-outline-success" type="submit">Enviar Whatsapp</button>
+    </div>
+    {% endif %}
+</form>
 
 {% endblock %}

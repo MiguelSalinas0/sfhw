@@ -1,0 +1,37 @@
+{% extends './layout.html' %}
+{% block title %} Excel {% endblock %}
+{% block body %}
+
+<div class="pt-5">
+    <form method="POST" action="/procesar_exc">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>DNI</th>
+                    <th>Apellido</th>
+                    <th>Domicilio</th>
+                    <th>Teléfono</th>
+                    <th class="d-flex justify-content-center">Seleccionar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dato in listaD %}
+                <input type="hidden" name="listaD[]" value='{{ dato | tojson }}'>
+                <tr>
+                    <td>{{dato.DNI}}</td>
+                    <td>{{dato.Apellido}}</td>
+                    <td>{{dato.Domicilio}}</td>
+                    <td>{{dato.Telefono}}</td>
+                    <td class="d-flex justify-content-center"><input type="checkbox" name="seleccionados[]" value='{{ dato | tojson }}' /></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pt-4">
+            <input type="submit" value="Generar Excel">
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

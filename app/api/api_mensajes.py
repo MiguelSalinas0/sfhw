@@ -2,10 +2,12 @@ from flask import session
 from db.db import get_db
 from twilio.rest import Client
 from datetime import datetime, timedelta
-
+import re
 
 account_sid = 'AC084d9e999a6ae67e6f28471ff580f0f4'
-auth_token = '9ea6a34dd7209eea0bb6e636246876c3'
+auth_token = 'ad1ef7bf371bbc92f7fad8ac2b9b4b96'
+twilio_phone_number = '+14155238886'
+expresion_regular = r'^\+549\d{10}$'
 client = Client(account_sid, auth_token)
 
 
@@ -25,45 +27,24 @@ def get_mensaje(op: int):
     cur.execute(value)
     rows = cur.fetchone()
     data = cur.to_dict(rows)
-    return data, error
-
-
-def get_creditos_a_vencer(fecha_futura):
-    error = None
-    con, cur = get_db()
-    cur.callproc('GET_CUOTA_AVENCER', [fecha_futura, fecha_futura, '0000'])
-    rows = cur.fetchall()
-    data = []
-    for row in rows:
-        data.append(cur.to_dict(row))
-    return data, error
-
-
-def get_creditos_vencidos(fecha_pasada):
-    error = None
-    con, cur = get_db()
-    cur.callproc('GET_CUOTA_VENCIDA', [fecha_pasada, fecha_pasada, '0000', 'N'])
-    rows = cur.fetchall()
-    data = []
-    for row in rows:
-        data.append(cur.to_dict(row))
+    con.commit()
     return data, error
 
 
 def enviarWTS(mensaje: str, number: str):
-    numberCom = ('whatsapp:' + number).replace(' ', '')
+    numberCom = ('whatsapp:' + number)
     message = client.messages.create(
         body=mensaje,
-        from_='whatsapp:+14155238886',
+        from_='whatsapp:' + twilio_phone_number,
         to=numberCom
     )
     return message.sid, message.status
 
 
 def enviarSMS(mensaje: str, number: str):
-    numberCom = number.replace(' ', '')
+    numberCom = number
     message = client.messages.create(
-        from_='+16203494263',
+        from_=twilio_phone_number,
         body=mensaje,
         to=numberCom
     )
@@ -71,7 +52,7 @@ def enviarSMS(mensaje: str, number: str):
 
 
 def get_mensajes_WTS(number: str, sentido: int):
-    numberCom = ('whatsapp:' + number).replace(' ', '')
+    numberCom = ('whatsapp:' + number)
     if sentido == 1:
         messages = client.messages.list(to=numberCom)
     else:
@@ -83,9 +64,9 @@ def get_mensajes_WTS(number: str, sentido: int):
         msDat['body'] = message.body
         msDat['date_sent'] = message.date_sent
         msDat['sid'] = message.sid
+        msDat['to'] = message.to
         mensajes.append(msDat)
-    mensajes_ordenados = sorted(mensajes, key=lambda mensaje: mensaje['date_sent'], reverse=True)
-    return mensajes_ordenados
+    return mensajes
 
 
 def registrar_mensajes(info_msj: dict):
@@ -99,15 +80,15 @@ def registrar_mensajes(info_msj: dict):
     try:
         cur.execute('INSERT INTO REG_MENSAJE_DEUDA (ID, TIPO, IDVENCIM, MENSAJE, FECHA, SUCURSAL, CLIEN, NTEL, SID, STATUS) ' +
                     'VALUES (?,?,?,?,?,?,?,?,?,?)', (str(indice),
-                                                   info_msj.get('tipo'),
-                                                   info_msj.get('idvencim'),
-                                                   info_msj.get('mensaje'),
-                                                   info_msj.get('fecha'),
-                                                   info_msj.get('sucursal'),
-                                                   info_msj.get('clien'),
-                                                   info_msj.get('tel'),
-                                                   info_msj.get('sid'),
-                                                   info_msj.get('status')))
+                                                     info_msj.get('tipo'),
+                                                     info_msj.get('idvencim'),
+                                                     info_msj.get('mensaje'),
+                                                     info_msj.get('fecha'),
+                                                     info_msj.get('sucursal'),
+                                                     info_msj.get('clien'),
+                                                     info_msj.get('tel'),
+                                                     info_msj.get('sid'),
+                                                     info_msj.get('status')))
         con.commit()
     except Exception as E:
         con.rollback()
@@ -137,11 +118,11 @@ def update_mensajes():
                     cur.execute('UPDATE REG_MENSAJE_DEUDA SET STATUS = ? WHERE SID = ?',
                                 (mensajes[indice]['status'], sid))
                     con.commit()
+                    bandera = True
                 except Exception as E:
                     con.rollback()
                     print(f"Unexpected {E=}, {type(E)=}")
                     error = {'error':'Error actualizando registro de mensaje: ' + str(E)}
-                bandera = True
             else:
                 indice += 1
     return error
@@ -157,6 +138,7 @@ def get_numbers(clien: str):
     data = []
     for row in rows:
         data.append(cur.to_dict(row))
+    con.commit()
     return data, error
 
 
@@ -176,26 +158,106 @@ def crear_mensajes(creditosVencidos: list, mensaje: dict, dia: int):
             info_msj = {}
             info_msj['tipo'] = 1
             '''asigno 1 si se le tiene que enviar wts o 0 si es sms
-            if credito['METHOD'] == 'wts': 
-                info_msj['tipo'] = 1
-            else:
-                info_msj['tipo'] = 0
+            info_msj['tipo'] = 1 if credito['METHOD'] == 'wts' else 0
             '''
             info_msj['idvencim'] = credito['IDVENCIM']
-            info_msj['mensaje'] = f'Aviso de vencimiento de cuota, {dia} días vencido'
             info_msj['fecha'] = datetime.now().strftime('%Y/%m/%d')
             info_msj['sucursal'] = '0000'
             info_msj['clien'] = credito['CLIEN']
-            info_msj['tel'] =  str(credito['TELEFONO_CELULAR'])
+            info_msj['tel'] =  validar_y_convertir_numero(str(credito['TELEFONO_CELULAR']))
             if dia == 11 or dia == 31 or dia == 90:
-                mensaje = str(mensaje['DETALLE']).replace('%apellido+nombre%', str(credito['APENOM']).strip()).replace('%vto%', str(credito['VTO'].strftime('%d/%m/%Y')))
+                msj = str(mensaje['DETALLE']).replace('%apellido+nombre%', str(credito['APENOM']).strip()).replace('%vto%', str(credito['VTO'].strftime('%d/%m/%Y')))
             else:
                 nuevoVencimiento = credito['VTO'] + timedelta(days=10)
-                mensaje = str(mensaje['DETALLE']).replace('%apellido+nombre%', str(credito['APENOM']).strip()).replace('%vto+10%', str(nuevoVencimiento.strftime('%d/%m/%Y')))
-            guardar_mensaje(info_msj, mensaje)
-            data, error = get_numbers(credito['CLIEN'])
-            if error == None:
-                for clave, valor in data[0].items():
-                    if valor.replace(' ', '') != '':
-                        info_msj['tel'] = valor
-                        guardar_mensaje(info_msj, mensaje)
+                msj = str(mensaje['DETALLE']).replace('%apellido+nombre%', str(credito['APENOM']).strip()).replace('%vto+10%', str(nuevoVencimiento.strftime('%d/%m/%Y')))
+            if re.match(expresion_regular, info_msj.get('tel')):
+                info_msj['mensaje'] = f'Aviso de vencimiento de cuota, {dia} días vencido'
+                guardar_mensaje(info_msj, msj)
+            elif info_msj.get('tel') == '':
+                info_msj['mensaje'] = 'Cliente sin número de teléfono'
+                registrar_mensajes(info_msj)
+            else:
+                info_msj['mensaje'] = 'Número de teléfono mal formado'
+                registrar_mensajes(info_msj)
+            '''
+            if evaluar_numeros_secundarios:
+                data, error = get_numbers(credito['CLIEN'])
+                if error == None:
+                    for clave, valor in data[0].items():
+                        num = valor.replace(' ', '')
+                        if num != '':
+                                if re.match(expresion_regular, num):
+                                    info_msj['mensaje'] = f'Aviso de vencimiento de cuota, {dia} días vencido'
+                                    info_msj['tel'] = num
+                                    guardar_mensaje(info_msj, msj)
+                                else:
+                                    info_msj['mensaje'] = 'Número de teléfono mal formado'
+                                    info_msj['tel'] = num
+                                    registrar_mensajes(info_msj)
+            '''
+
+
+def validar_y_convertir_numero(numero: str):
+    numero = numero.replace(" ", "")
+    if re.match(r'^\d{9,11}$', numero):
+        # Quitar el "0" inicial si está presente
+        if numero.startswith('0'):
+            numero = numero[1:]
+        # Añadir "+549" al principio si no está presente
+        if not numero.startswith('+549'):
+            numero = '+549' + numero
+    return numero
+
+
+def contar_mensajes(clien: str):
+    con, cur = get_db()
+    cur.execute('SELECT COUNT(*) AS cantidad_mensajes FROM REG_MENSAJE_DEUDA r WHERE r.CLIEN = ?', (clien,))
+    row = cur.fetchone()
+    cant = cur.to_dict(row)
+    con.commit()
+    return cant
+
+
+def mensajes_status(op: int, clien = ''):
+    con, cur = get_db()
+    if op == 0:
+        fecha = (datetime.now() + timedelta(days=-13)).strftime('%Y/%m/%d')
+        cur.execute('SELECT * FROM REG_MENSAJE_DEUDA R WHERE R.FECHA = ?', (fecha,))
+    else:
+        cur.execute('SELECT * FROM REG_MENSAJE_DEUDA R WHERE R.CLIEN = ?', (clien,))
+    rows = cur.fetchall()
+    data = []
+    queued = []
+    failed = []
+    sent = []
+    delivered = []
+    read = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    for mensaje in data:
+        stat = str(mensaje.get('STATUS')).lower()
+        if stat == 'queued':
+            queued.append(mensaje)
+        if stat == 'failed':
+            failed.append(mensaje)
+        if stat == 'sent':
+            sent.append(mensaje)
+        if stat == 'delivered':
+            delivered.append(mensaje)
+        if stat == 'read':
+            read.append(mensaje)
+    status = {
+        'queued': queued,
+        'failed': failed,
+        'sent': sent,
+        'delivered': delivered,
+        'read': read
+    }
+    return status
+
+
+
+
+
+def metodo_opcion1():
+    return 'metodo ejecutado'

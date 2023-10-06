@@ -35,8 +35,8 @@ def new_credito(cliente_cred, items_cred):
     except Exception as E:
         con.rollback()
         error = {'error':'Error grabando credito: ' + str(E)}
-
     return error
+
 
 def get_creditos(estado: int = 0):
     error = None
@@ -53,6 +53,7 @@ def get_creditos(estado: int = 0):
     for row in rows:
         data.append(cur.to_dict(row))
     return data, error
+
 
 def get_credito_pendiente(id: int, estado: int):
     error = None
@@ -79,6 +80,7 @@ def get_credito_pendiente(id: int, estado: int):
     con.commit()      
     return datos, error
 
+
 def get_itemscred(id: int):
     error = None
     con, cur = get_db()
@@ -95,8 +97,9 @@ def get_itemscred(id: int):
         datos = []
         for row in rows:
             datos.append(cur.to_dict(row))
-    con.commit      
+    con.commit()      
     return datos, error
+
 
 def get_creditos_otorgados(id: int):
     con, cur = get_db()
@@ -111,8 +114,9 @@ def get_creditos_otorgados(id: int):
         datos = []
         for row in rows:
             datos.append(cur.to_dict(row))
-    con.commit      
+    con.commit()      
     return datos
+
 
 def get_historial_creditos(id: int):
     con, cur = get_db()
@@ -125,6 +129,38 @@ def get_historial_creditos(id: int):
         datos = []
         for row in rows:
             datos.append(cur.to_dict(row))
-    con.commit      
+    con.commit()      
     return datos
 
+
+def get_creditos_a_vencer(fecha_futura):
+    error = None
+    con, cur = get_db()
+    cur.execute('select * from GET_CUOTA_AVENCER (?,?,?)', [fecha_futura, fecha_futura, '0000'])
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error
+
+
+def get_creditos_vencidos(fecha_pasada):
+    error = None
+    con, cur = get_db()
+    cur.callproc('GET_CUOTA_VENCIDA', [fecha_pasada, fecha_pasada, '0000', 'N'])
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error
+
+
+def get_creditos_una_cta_venc(fecha_pasada, sucursal = '0000'):
+    error = None
+    con, cur = get_db()
+    cur.execute('select * from GET_CLI_SOLO_UNACTA_DEUDA (?,?,?)', [sucursal, fecha_pasada, fecha_pasada])
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error

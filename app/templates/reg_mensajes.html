@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block titulo %} Mensajes {% endblock %}
+{% block title %} Mensajes {% endblock %}
 {% block body %}
 
 <div class="col-md-12 d-flex pt-5">
@@ -19,7 +19,7 @@
                 <tr class="">
                     <td>{{msj.status}}</td>
                     <td>{{msj.body}}</td>
-                    <td>{{msj.date_sent.strftime('%d/%m/%Y')}}</td>
+                    <td>{{msj.date_sent}}</td>
                     <td>{{msj.sid}}</td>
                 </tr>
                 {% endfor %}
@@ -41,7 +41,7 @@
                 <tr class="">
                     <td>{{msj.status}}</td>
                     <td>{{msj.body}}</td>
-                    <td>{{msj.date_sent.strftime('%d/%m/%Y')}}</td>
+                    <td>{{msj.date_sent}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
