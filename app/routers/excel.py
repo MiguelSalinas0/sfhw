@@ -8,7 +8,7 @@ import json
 
 
 @bp.route('/ejemplo_list_excel')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def ejemplo_list_excel():
     listaD = [
@@ -24,7 +24,7 @@ def ejemplo_list_excel():
 
 
 @bp.route('/procesar_exc', methods=['POST'])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def procesar_exc():
     listaD = [json.loads(perfil) for perfil in request.form.getlist('listaD[]')]
@@ -47,7 +47,7 @@ def procesar_exc():
 
 
 @bp.route('/procesar_formulario', methods=['POST'])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def procesar_formulario():
     dni = request.form.get('dni')

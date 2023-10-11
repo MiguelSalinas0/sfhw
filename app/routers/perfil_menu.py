@@ -6,7 +6,7 @@ from app.decorators import login_required, permission_required
 
 
 @bp.route('/nuevo_perfil/<op>')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def nuevo_perfil(op):
     if op == '1':
@@ -30,7 +30,7 @@ def nuevo_perfil(op):
 
 
 @bp.route('/nuevo_perfil/select_usr', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def select_usr():
     if request.method == "POST":
@@ -42,7 +42,7 @@ def select_usr():
 
 
 @bp.route('/nuevo_perfil/eliminar_perfil', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def eliminar_perfil():
     if request.method == "POST":
@@ -58,7 +58,7 @@ def eliminar_perfil():
 
 
 @bp.route('/nuevo_perfil/eliminar_menu', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def eliminar_menu():
     if request.method == "POST":
@@ -79,7 +79,7 @@ def eliminar_menu():
 
 
 @bp.route('/nuevo_perfil/mod_perfil', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def mod_perfil():
     if request.method == "POST":

@@ -8,7 +8,7 @@ from app.decorators import login_required, permission_required
 
 
 @bp.route('/nuevoproducto', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def nuevoproducto():
     if session.get("cliente") != []:
@@ -38,7 +38,7 @@ def nuevoproducto():
 
 
 @bp.route('/nuevocred', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def nuevocred():
     sucursales, error = get_sucursales()
@@ -47,7 +47,7 @@ def nuevocred():
 
 
 @bp.route('/solicitudCred', methods=["POST"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def solicitudCred():
     if request.method == "POST":
@@ -64,7 +64,7 @@ def solicitudCred():
 
 
 @bp.route('/eliminar/<i>')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def eliminar(i):
     items = session.get("items")
@@ -81,7 +81,7 @@ def eliminar(i):
 
 
 @bp.route('/solicitudes')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def solicitudes():
     creditos, error = get_creditos(0)
@@ -90,7 +90,7 @@ def solicitudes():
 
 
 @bp.route('/pendientes')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def pendientes():
     creditos, error = get_creditos(1)
@@ -99,7 +99,7 @@ def pendientes():
 
 
 @bp.route('/datosCredito/<id>/<estado>')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def datosCredito(id: int, estado: int):
     cliente, error = get_credito_pendiente(id, estado)

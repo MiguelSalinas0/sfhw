@@ -6,7 +6,6 @@ from app.decorators import login_required, permission_required
 
 
 @bp.route('/usuario')
-@permission_required('sistema')
 @login_required
 def usuario():
     usuario = session["usuario"]
@@ -15,7 +14,7 @@ def usuario():
 
 @bp.route('/user', methods=['POST', 'GET'], defaults={"iduser": 0})
 @bp.route('/user/<iduser>', methods=['POST', 'GET'])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def user(iduser):
     tipodocs, error = get_tipodoc()
@@ -42,7 +41,7 @@ def user(iduser):
 
 
 @bp.route('/grabarUsuario', methods=["POST"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def grabarUsuario():
     if request.method == "POST":
@@ -80,7 +79,7 @@ def grabarUsuario():
 
 
 @bp.route('/deleteUser')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def deleteUser():
     user = dict(session.get("user"))

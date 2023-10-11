@@ -9,7 +9,7 @@ from app.decorators import login_required, permission_required
 
 @bp.route('/cliente', methods=['POST', 'GET'], defaults={"idclien": 0})
 @bp.route('/cliente/<idclien>', methods=['POST', 'GET'])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def cliente(idclien):
     tipodocs, error = get_tipodoc()
@@ -42,7 +42,7 @@ def cliente(idclien):
 
 
 @bp.route('/grabarCliente', methods=["POST"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def grabarCliente():
     if request.method == "POST":
@@ -102,7 +102,7 @@ def grabarCliente():
 
 
 @bp.route('/estado_cuenta')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def estado_cuenta():
     if session.get("cliente") != []:

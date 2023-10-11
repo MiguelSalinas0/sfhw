@@ -7,21 +7,21 @@ from app.decorators import login_required, permission_required
 
 
 @bp.route('/estadocuenta')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def estadoCuenta():
     return render_template('/estadocuenta.html')
 
 
 @bp.route('/documentacion')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def documentacion():
     return render_template('/documentacion.html')
 
 
 @bp.route('/dat_credixsa')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def dat_credixsa():
     totalDeuda = 0.0

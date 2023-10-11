@@ -9,7 +9,7 @@ from app.decorators import login_required, permission_required
 
 
 @bp.route('/dias_3', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def dias_3():
     mensaje, error = get_mensaje(3)
@@ -56,7 +56,7 @@ def dias_3():
 
 
 @bp.route('/select_atraso/<op>')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def select_atraso(op):
     op = int(op)
@@ -65,7 +65,7 @@ def select_atraso(op):
 
 
 @bp.route('/get_atraso', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def get_atraso():
     if request.method == 'POST':
@@ -92,7 +92,7 @@ def get_atraso():
 
 
 @bp.route('/enviar_msj', methods=["POST", "GET"])
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def enviar_msj():
     if request.method == 'POST':
@@ -111,7 +111,7 @@ def enviar_msj():
 
 
 @bp.route('/reg_mensajes')
-@permission_required('sistema')
+# @permission_required('sistema')
 @login_required
 def reg_mensajes():
     msj_enviados = get_mensajes_WTS('+5492645139411', 1)
