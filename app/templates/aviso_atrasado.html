@@ -3,7 +3,7 @@
 {% block body %}
 
 <div class="container pt-4">
-    <form action="{{ url_for('get_atraso') }}" method="POST" class="d-flex justify-content-center justify-content-evenly">
+    <form action="{{ url_for('bp.get_atraso') }}" method="POST" class="d-flex justify-content-center justify-content-evenly">
         <input type="hidden" name="opv" id="opv" value="{{opv}}">
         <div class="form-group">
             <select class="form-select" aria-label="Default select example" id="infoSel" name="infoSel">

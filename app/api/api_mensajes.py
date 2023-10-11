@@ -1,5 +1,5 @@
 from flask import session
-from db.db import get_db
+from app.db.db import get_db
 from twilio.rest import Client
 from datetime import datetime, timedelta
 import re

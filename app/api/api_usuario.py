@@ -1,5 +1,6 @@
 import hashlib
-from db.db import get_db
+from app.db.db import get_db
+#from db.db import get_db
 
 
 def get_all_user():
@@ -180,12 +181,5 @@ def get_menu(id_user):
 
 
 def eval_menu(rol_list: list, nom_menu: str):
-    bandera = False
-    indice = 0
-    while not bandera and indice < len(rol_list):
-        if nom_menu.upper() == rol_list[indice]['NOMBRE'].upper():
-            bandera = True
-        else:
-            indice += 1
-    return bandera
-
+    menu_set = set(item['NOMBRE'].upper() for item in rol_list)
+    return nom_menu.upper() in menu_set

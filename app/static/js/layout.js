@@ -24,3 +24,36 @@ window.addEventListener("DOMContentLoaded", function () {
         },
     });
 });
+
+document.getElementById('sidebarCollapse').addEventListener('click', function () {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+    const sidebarActive = sidebar.classList.contains('active');
+    const sidebarCollapse = document.getElementById('sidebarCollapse');
+    if (sidebarActive) {
+        sidebarCollapse.style.right = '250px';
+    } else {
+        sidebarCollapse.style.right = '0';
+    }
+});
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.remove('active');
+        const sidebarCollapse = document.getElementById('sidebarCollapse');
+        sidebarCollapse.style.right = '0';
+    }
+});
+$(document).ready(function () {
+    $("#miFormulario").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "/procesar_formulario",
+            data: $(this).serialize(),
+            success: function (response) {
+                $("#search-results").html(response.resultado);
+            }
+        });
+    });
+});

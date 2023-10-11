@@ -5,9 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} {% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="/static/img/logo solo-oficial-2021_32x32.jpg">
+    <link rel="icon" href="{{ url_for('bp.static', filename='img/logo_solo-oficial-2021_32x32.jpg') }}" type="image/x-icon">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <!-- 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     
@@ -21,8 +20,8 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script defer type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.5/datatables.min.js"></script>
-    <script src="static/js/layout.js"></script>
-    <link rel="stylesheet" href="static/css/layout.css">
+    <script defer src="{{ url_for('bp.static', filename='js/layout.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('bp.static', filename='css/layout.css') }}">    
     {% block algun_script %} {% endblock %} 
 </head>
 
@@ -42,10 +41,10 @@
           <li class="nav-item dropdown">
             <a class="nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">Cliente</a>
             <ul class="dropdown-menu dropdown-menu-sm-start">
-              <li><a class="dropdown-item" href="{{ url_for('cliente') }}">Gestión de clientes</a></li>
-              <!-- <li><a class="dropdown-item" href="{{ url_for('dias_3') }}">Aviso 3 días antes</a></li> -->
-              <!-- <li><a class="dropdown-item" href="{{ url_for('select_atraso', op = 1) }}">Avisos atrasados hasta 9 días</a></li> -->
-              <li><a class="dropdown-item" href="{{ url_for('select_atraso', op = 2) }}">Avisos atrasados desde 11 días</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('bp.cliente') }}">Gestión de clientes</a></li>
+              <!-- <li><a class="dropdown-item" href="{{ url_for('bp.dias_3') }}">Aviso 3 días antes</a></li> -->
+              <!-- <li><a class="dropdown-item" href="{{ url_for('bp.select_atraso', op = 1) }}">Avisos atrasados hasta 9 días</a></li> -->
+              <li><a class="dropdown-item" href="{{ url_for('bp.select_atraso', op = 2) }}">Avisos atrasados desde 11 días</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -61,9 +60,9 @@
           <li class="nav-item dropdown">
             <a class="nav-link" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">Perfiles</a>
             <ul class="dropdown-menu dropdown-menu-sm-start">
-              <li><a class="dropdown-item" href="{{ url_for('nuevo_perfil', op = 1) }}">Perfiles</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('nuevo_perfil', op = 2) }}">Gestión de perfiles</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('nuevo_perfil', op = 3) }}">Menús</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('bp.nuevo_perfil', op = 1) }}">Perfiles</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('bp.nuevo_perfil', op = 2) }}">Gestión de perfiles</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('bp.nuevo_perfil', op = 3) }}">Menús</a></li>
             </ul>
           </li>
           <li class="nav-item">

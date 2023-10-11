@@ -1,21 +1,17 @@
 {% extends './layout.html' %}
-{% block title %} {{data.titulo}} {% endblock %}
+{% block title %} San Francisco Hogar {% endblock %}
+
 {% block body %}
-<h1>Página de inicio</h1>
 
-<div class="container">
+<div class="container pt-5">
     <div class="row">
-        <div class="col-sm-3">
-
-        </div>
-        <div class="col-sm">
+        <!-- <div class="col-sm-3"></div> -->
+        <div class="col-sm d-flex justify-content-center pt-5">
             <div class="mx-auto">
-                <img src="./static/img/logo-oficial-2021-700x214.png" class="img-fluid" alt="logo San Francisco Hogar">
+                <img src="{{ url_for('bp.static', filename='img/logo-oficial-2021-700x214.png') }}" alt="logo San Francisco Hogar">
             </div>
         </div>
-        <div class="col-sm-3">
-
-        </div>
+        <!-- <div class="col-sm-3"></div> -->
     </div>
 </div>
 
@@ -39,41 +35,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById('sidebarCollapse').addEventListener('click', function () {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('active');
-        const sidebarActive = sidebar.classList.contains('active');
-        const sidebarCollapse = document.getElementById('sidebarCollapse');
-        if (sidebarActive) {
-            sidebarCollapse.style.right = '250px';
-        } else {
-            sidebarCollapse.style.right = '0';
-        }
-    });
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.remove('active');
-            const sidebarCollapse = document.getElementById('sidebarCollapse');
-            sidebarCollapse.style.right = '0';
-        }
-    });
-    $(document).ready(function () {
-        $("#miFormulario").submit(function (event) {
-            event.preventDefault();
-            $.ajax({
-                type: "POST",
-                url: "/procesar_formulario",
-                data: $(this).serialize(),
-                success: function (response) {
-                    $("#search-results").html(response.resultado);
-                }
-            });
-        });
-    });
-
-</script>
 
 {% endblock %}

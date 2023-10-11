@@ -1,5 +1,5 @@
 from flask import session
-from db.db import get_db
+from app.db.db import get_db
 from datetime import date
 
 def new_credito(cliente_cred, items_cred):

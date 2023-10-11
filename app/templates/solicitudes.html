@@ -1,7 +1,5 @@
 {% extends 'layout.html' %}
-{% block title %}
-Solicitudes de Crédito
-{% endblock %}
+{% block title %} Solicitudes de Crédito {% endblock %}
 
 {% block algun_script %}
     <script>
@@ -41,7 +39,7 @@ Solicitudes de Crédito
                         <td>{{solicitud.AUTORIZA}}</td>
                     {% endif %}    
                     <td>
-                        <a href="{{ url_for('datosCredito', id = solicitud.ID, estado = solicitud.ESTADO) }}" class="btn btn-success">Detalles</a>
+                        <a href="{{ url_for('bp.datosCredito', id = solicitud.ID, estado = solicitud.ESTADO) }}" class="btn btn-success">Detalles</a>
                     </td>
                 </tr>
             {% endfor %}

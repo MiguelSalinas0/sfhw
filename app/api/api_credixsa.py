@@ -1,5 +1,5 @@
 import requests
-from db.db import get_db
+from app.db.db import get_db
 
 url = "https://webservice.credixsa.com/ws004.php"
 

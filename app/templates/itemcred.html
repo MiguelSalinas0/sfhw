@@ -1,7 +1,5 @@
 {% extends 'layout.html' %}
-{% block title %}
-Nuevo crédito
-{% endblock %}
+{% block title %} Nuevo crédito {% endblock %}
 
 {% block body %}
 
@@ -19,7 +17,7 @@ Nuevo crédito
 
 
 <div class="container">
-    <form action="{{ url_for('nuevoproducto') }}" method="POST">
+    <form action="{{ url_for('bp.nuevoproducto') }}" method="POST">
         <div class="justify-content-center row my-2">
             <div class="col-md-4">
                 <label for="" class="form-label">Código</label>
@@ -59,7 +57,7 @@ Nuevo crédito
                         <td>{{item.cantidad}}</td>
                         <td>{{item.unitario}}</td>
                         <td>{{item.total}}</td>
-                        <td><a class="btn btn-danger" href="{{ url_for('eliminar', i = item.codigo) }}">Eliminar</a></td>
+                        <td><a class="btn btn-danger" href="{{ url_for('bp.eliminar', i = item.codigo) }}">Eliminar</a></td>
                     </tr>
                 {% endfor %}    
             </tbody>
@@ -68,7 +66,7 @@ Nuevo crédito
 
     <div class="mb-3 row">
         <div class="offset-sm-1 col-sm-2 my-2">
-            <a class="btn btn-success" href="{{ url_for('nuevocred') }}" role="button">Datos adicionales</a>
+            <a class="btn btn-success" href="{{ url_for('bp.nuevocred') }}" role="button">Datos adicionales</a>
         </div>
     </div>
 

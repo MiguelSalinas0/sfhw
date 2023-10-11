@@ -1,4 +1,4 @@
-from db.db import get_db
+from app.db.db import get_db
 
 
 def get_all_perfil():
