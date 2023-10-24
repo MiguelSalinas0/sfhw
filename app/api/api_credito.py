@@ -164,3 +164,14 @@ def get_creditos_una_cta_venc(fecha_pasada, sucursal = '0000'):
     for row in rows:
         data.append(cur.to_dict(row))
     return data, error
+
+
+def get_creditos_atrasados_dias(dias_desde: int, dias_hasta: int):
+    error = None
+    con, cur = get_db()
+    cur.execute('select * from GET_CREDITOS_ATRASADOS_DIAS (?,?)', [dias_desde, dias_hasta])
+    rows = cur.fetchall()
+    data = []
+    for row in rows:
+        data.append(cur.to_dict(row))
+    return data, error

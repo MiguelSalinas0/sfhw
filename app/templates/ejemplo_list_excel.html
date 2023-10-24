@@ -2,32 +2,65 @@
 {% block title %} Excel {% endblock %}
 {% block body %}
 
+<div class="container border back mt-5">
+    <form action="/filtrar_reg" method="POST">
+        <div class="justify-content-start row my-2">
+            <div class="d-flex align-items-center justify-content-evenly">
+                <div class="d-flex align-items-center col-3">
+                    <label class="col-3" for="dias_desde">Días desde</label>
+                    <input class="form-control" type="number" name="dias_desde" id="dias_desde" required>
+                </div>
+                <div class="d-flex align-items-center mx-5 col-3">
+                    <label class="col-3" for="dias_hasta">Días hasta</label>
+                    <input class="form-control" type="number" name="dias_hasta" id="dias_hasta" required>
+                </div>
+                <div class="dropdown d-flex justify-content-center" aria-multiselectable="true">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Categorias
+                    </button>
+                    <div class="dropdown-content mt-4">
+                        {% for cate in categorias %}
+                        <label class="d-flex align-items-center">
+                            <input type="checkbox" name="cate_checkbox" value="{{cate.NOMBRE}}">{{cate.NOMBRE}}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-1 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
 <div class="pt-5">
     <form method="POST" action="/procesar_exc">
         <table class="table">
             <thead>
                 <tr>
-                    <th>DNI</th>
-                    <th>Apellido</th>
-                    <th>Domicilio</th>
-                    <th>Teléfono</th>
-                    <th class="d-flex justify-content-center">Seleccionar</th>
+                    <th>Cliente</th>
+                    <th>Apellido y Nombre</th>
+                    <th>Localidad</th>
+                    <th>Categoría</th>
+                    <th class="d-flex justify-content-center">Omitir</th>
                 </tr>
             </thead>
             <tbody>
                 {% for dato in listaD %}
                 <input type="hidden" name="listaD[]" value='{{ dato | tojson }}'>
                 <tr>
-                    <td>{{dato.DNI}}</td>
-                    <td>{{dato.Apellido}}</td>
-                    <td>{{dato.Domicilio}}</td>
-                    <td>{{dato.Telefono}}</td>
+                    <td>{{dato.CLIEN}}</td>
+                    <td>{{dato.APENOM}}</td>
+                    <td>{{dato.LOCALIDAD}}</td>
+                    <td>{{dato.CATEGORIA}}</td>
                     <td class="d-flex justify-content-center"><input type="checkbox" name="seleccionados[]" value='{{ dato | tojson }}' /></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <div class="pt-4">
+        <div class="py-5">
             <input type="submit" value="Generar Excel">
         </div>
     </form>

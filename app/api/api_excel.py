@@ -1,6 +1,15 @@
 import openpyxl
 import xlrd
+import datetime
+import locale
 from xlutils.copy import copy
+
+# Establecer la configuración regional en español
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+
+fecha_actual = datetime.datetime.now()
+mes = fecha_actual.strftime("%B")
+anio = fecha_actual.year
 
 
 def generar_credixsa(datos: list):
@@ -11,7 +20,7 @@ def generar_credixsa(datos: list):
     # Seleccionar la hoja en la que se desea trabajar (por defecto, la primera hoja)
     hoja = workbook.active
 
-    claves_a_incluir = ['DNI', 'Apellido', 'Domicilio']
+    claves_a_incluir = ['DNI', 'APENOM', 'Domicilio', 'LOCALIDAD', 'cp', 'prov', 'TELEFONO_CELULAR']
 
     # Encabezados en la fila 1 (A1, B1, C1, ...)
     # encabezados = claves_a_incluir
@@ -26,8 +35,11 @@ def generar_credixsa(datos: list):
             hoja.cell(row=fila, column=columna, value=valor)
         fila += 1
 
-    workbook.save(archivo_excel)
+    workbook.save(f'{mes}-{anio}-{archivo_excel}')
     workbook.close()
+
+    # # Restaurar la configuración regional a la original si es necesario
+    # locale.setlocale(locale.LC_TIME, 'C')
 
 
 def generar_veraz(datos: list):
@@ -55,7 +67,7 @@ def generar_veraz(datos: list):
             hoja_escritura.write(ultima_fila, columna, valor)
         ultima_fila += 1
 
-    archivo_escritura.save(archivo_excel)
+    archivo_escritura.save(f'{mes}-{anio}-{archivo_excel}')
 
 
 def generar_codesa(datos: list):
@@ -70,4 +82,4 @@ def generar_codesa(datos: list):
             valor = dato.get(clave, '')
             hoja_escritura.write(ultima_fila, columna, valor)
         ultima_fila += 1
-    archivo_escritura.save(archivo_excel)
+    archivo_escritura.save(f'{mes}-{anio}-{archivo_excel}')

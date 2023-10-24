@@ -1,5 +1,7 @@
 from flask import render_template, request, flash
+import pytz
 from app import bp
+from app.api.api_cliente import *
 from app.api.api_credito import *
 from app.api.api_mensajes import *
 
@@ -119,25 +121,38 @@ def reg_mensajes():
     return render_template('reg_mensajes.html', msj_enviados=msj_enviados, msj_recibidos=msj_recibidos)
 
 
-# @app.route('/webhook', methods=['POST'])
-# @login_required
-# def webhook():
-#     if request.method == 'POST':
-#         data = request.form
-#         # message_body = data.get('Body', '')
-#         number_from = data.get('From', '').split(':')
-#         mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
-#         mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
-#         men = mensajes_recibidos + mensajes_enviados
-#         max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
-#         mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
-#         print(mensss)
-#         # print(message_body)
-#         # print(data)
-#         cli, error = get_cli_con_num(number_from[1])
-#         if error == None:
-#             flash(f'nuevo mensaje',category='info')
-#             return render_template('chat.html')
+
+
+
+
+
+@bp.route('/webhook', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        data = request.form
+        message_body = data.get('Body', '')
+        number_from = data.get('From', '').split(':')
+        mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
+        mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
+        men = mensajes_recibidos + mensajes_enviados
+        max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
+        mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
+        print(mensss)
+        # print(message_body)
+        # print(data)
+        cli, error = get_cli_con_num(number_from[1])
+        if error == None:
+            flash(f'nuevo mensaje',category='info')
+            return render_template('chat.html')
+
+
+
+
+
+
+
+
+
 
 
 # @app.route('/webhook', methods=['POST'])
@@ -149,24 +164,33 @@ def reg_mensajes():
 #         # La solicitud es válida, procesar el evento
 #         data = request.form
 #         event_type = data.get('EventType', '')
-
 #         # Procesar el evento según sea necesario
 #         if event_type == 'onMessageAdded':
 #             message_body = data.get('Body', '')
 #             conversation_sid = data.get('ConversationSid', '')
 #             source = data.get('Source', '')
-
 #             # Verificar si el mensaje proviene de WhatsApp
 #             if source == 'whatsapp':
 #                 # Procesar el mensaje de WhatsApp
 #                 print(f"Mensaje de WhatsApp recibido en la conversación {conversation_sid}: {message_body}")
-
 #                 # Puedes realizar acciones específicas para mensajes de WhatsApp aquí
-
 #         return redirect(url_for('index'))
 #     else:
 #         # La solicitud no es válida
 #         return redirect(url_for('index'))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # opciones = {
@@ -175,7 +199,11 @@ def reg_mensajes():
 #                '1. Opción 1\n'
 #                '2. Opción 2\n'
 #                '3. Salir',
-#         'opciones': ['opción 1', 'opción 2', 'salir'],
+#         'opciones': {
+#             1: 'opción 1',
+#             2: 'opción 2',
+#             3: 'salir'
+#         }
 #     },
 #     'opción 1': {
 #         'mensaje': 'Has elegido la opción 1. ¿Quieres hacer algo más?',
@@ -203,7 +231,6 @@ def reg_mensajes():
 #     }
 # }
 # @bp.route('/webhook', methods=['POST'])
-# @login_required
 # def webhook():
 #     if request.method == 'POST':
 #         data = request.form
@@ -216,32 +243,17 @@ def reg_mensajes():
 #         current_option = session[number_from]
 #         if message_body.lower() == 'salir':
 #             del session[number_from]
-#             response.message(opciones[message_body.lower()]['mensaje'])
+#             response.message('Gracias por usar nuestro servicio. ¡Hasta luego!')
 #         if message_body.lower() == 'volver':
-#             response.message(opciones[message_body.lower()]['mensaje'])
-#             session[number_from] = message_body.lower()
+#             response.message(opciones[current_option]['mensaje'])
+#             session[number_from] = 'inicio'
 #         else:
-#             if message_body.lower() in opciones[current_option]['opciones']:
-#                 current_option = message_body.lower()
-#                 session[number_from] = current_option
-#                 if current_option == 'opción 1':
-#                     resultado = metodo_opcion1()
-#                     response.message(resultado)
+#             if message_body.isdigit():
+#                 if int(message_body) in opciones[current_option]['opciones']:
+#                     current_option = opciones[current_option]['opciones'][int(message_body)]
+#                     print(current_option)
+#                     session[number_from] = current_option
 #                     response.message(opciones[current_option]['mensaje'])
+#                 else:
+#                     response.message('Opción no válida. Por favor, elige una opción válida.')
 #         return str(response)
-
-
-#         # mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
-#         # mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
-#         # men = mensajes_recibidos + mensajes_enviados
-#         # max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
-#         # mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
-#         # cli, error = get_cli_con_num(number_from[1])
-#         # if message_body.lower() == 'salir':
-#         #     del session[number_from]
-#         # else:
-#         #     if message_body.lower() in opciones[current_option]['opciones']:
-#         #         current_option = message_body.lower()
-#         # response.message(opciones[current_option]['mensaje'])
-#         # session[number_from] = current_option
-#         # return str(response)
