@@ -9,8 +9,8 @@ import re
 # twilio_phone_number = '+17853902449'
 
 account_sid = 'AC084d9e999a6ae67e6f28471ff580f0f4'
-auth_token = 'da71f9831c4da35795d9fbb93927cc75'
-twilio_phone_number = '+15855601270'
+auth_token = '024c7ffb5e04fbd032d0c06bdbb112f6'
+twilio_phone_number = '+14155238886'
 expresion_regular = r'^\+549\d{10}$'
 client = Client(account_sid, auth_token)
 
@@ -38,8 +38,8 @@ def get_mensaje(op: int):
 def enviarWTS(mensaje: str, number: str):
     numberCom = ('whatsapp:' + number)
     message = client.messages.create(
-        body=mensaje,
         from_='whatsapp:' + twilio_phone_number,
+        body=mensaje,
         to=numberCom
     )
     return message.sid, message.status
@@ -71,6 +71,16 @@ def get_mensajes_WTS(number: str, sentido: int):
         msDat['to'] = message.to
         mensajes.append(msDat)
     return mensajes
+
+
+def get_status(number: str, sentido: int, id_msj):
+    mensajes = get_mensajes_WTS(number, sentido)
+    bandera = False
+    indice = 0
+    while bandera == False and indice < len(mensajes):
+        if mensajes[indice]['sid'] == id_msj:
+            bandera = True
+    return mensajes[indice]['status'] if bandera else None
 
 
 def registrar_mensajes(info_msj: dict):
@@ -263,5 +273,74 @@ def mensajes_status(op: int, clien = ''):
 
 
 
+
+
+
+
+def reg_mensaj_chat(datos: dict):
+    error = None
+    con, cur = get_db()
+    fecha_actual = datetime.now().date()
+    hora_actual = datetime.now().time()
+    try:
+        cur.execute('INSERT INTO MENSAJES_CHAT (BODY, N_TEL, FECHA, HORA) ' +
+                    'VALUES (?,?,?,?)', (datos.get('body'),
+                                         datos.get('tel'),
+                                         fecha_actual,
+                                         hora_actual,))
+        con.commit()
+    except Exception as E:
+        con.rollback()
+        print(f"Unexpected {E=}, {type(E)=}")
+        error = {'error': 'Error grabando registro de mensaje: ' + str(E)}
+    return error
+
+
+def get_mensaj_chat():
+    error = None
+    con, cur = get_db()
+    data = []
+    try:
+        cur.execute('SELECT * FROM MENSAJES_CHAT ms WHERE ms.LEIDO = 0')
+        rows = cur.fetchall()
+        for row in rows:
+            data.append(cur.to_dict(row))
+        con.commit()
+    except Exception as E:
+        con.rollback()
+        print(f"Unexpected {E=}, {type(E)=}")
+        error = {'error': 'Error grabando registro de mensaje: ' + str(E)}
+    return data, error
+
+
+def update_mensaj_chat(id: int):
+    error = None
+    con, cur = get_db()
+    try:
+        cur.execute('UPDATE MENSAJES_CHAT ms SET ms.LEIDO = 1 WHERE ms.ID = ?', (id,))
+        con.commit()
+    except Exception as E:
+        con.rollback()
+        print(f"Unexpected {E=}, {type(E)=}")
+        error = {'error': 'Error grabando registro de mensaje: ' + str(E)}
+    return error
+
+
+def get_one_mensaj(id: int):
+    error = None
+    con, cur = get_db()
+    cur.execute('SELECT * FROM MENSAJES_CHAT ms WHERE ms.ID = ?', (id,))
+    row = cur.fetchone()
+    if row == None:
+        error = {'error': f'No hay datos de mensaje para ID: {id}'}
+        return {}, error
+    return cur.to_dict(row), error
+
+
+
+
+
+
 def metodo_opcion1():
     return 'metodo ejecutado'
+

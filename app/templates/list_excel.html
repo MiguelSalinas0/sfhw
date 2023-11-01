@@ -36,7 +36,7 @@
 
 
 <div class="pt-5">
-    <form method="POST" action="/procesar_exc">
+    <form method="POST" action="/procesar_exc" enctype="multipart/form-data">
         <table class="table">
             <thead>
                 <tr>
@@ -44,7 +44,6 @@
                     <th>Apellido y Nombre</th>
                     <th>Localidad</th>
                     <th>Categoría</th>
-                    <th class="d-flex justify-content-center">Omitir</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,14 +54,18 @@
                     <td>{{dato.APENOM}}</td>
                     <td>{{dato.LOCALIDAD}}</td>
                     <td>{{dato.CATEGORIA}}</td>
-                    <td class="d-flex justify-content-center"><input type="checkbox" name="seleccionados[]" value='{{ dato | tojson }}' /></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <input type="file" name="file">
+        {% if bandera != False %}
         <div class="py-5">
-            <input type="submit" value="Generar Excel">
+            <input type="submit" value="Generar Informe Credixsa" name="submitButton">
+            <input class="mx-5" type="submit" value="Generar Informe Veraz" name="submitButton">
+            <input type="submit" value="Generar Informe Codesa" name="submitButton">
         </div>
+        {% endif %}
     </form>
 </div>
 

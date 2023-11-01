@@ -1,6 +1,7 @@
-from flask import render_template, request, flash
+from flask import redirect, render_template, request, flash, url_for
 import pytz
 from app import bp
+from app.api.api_chat import CustomDialog
 from app.api.api_cliente import *
 from app.api.api_credito import *
 from app.api.api_mensajes import *
@@ -8,6 +9,8 @@ from app.api.api_mensajes import *
 from twilio.twiml.messaging_response import MessagingResponse
 
 from app.decorators import login_required, permission_required
+
+from PyQt6.QtWidgets import QApplication
 
 
 @bp.route('/dias_3', methods=["POST", "GET"])
@@ -132,24 +135,37 @@ def webhook():
         data = request.form
         message_body = data.get('Body', '')
         number_from = data.get('From', '').split(':')
-        mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
-        mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
-        men = mensajes_recibidos + mensajes_enviados
-        max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
-        mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
-        print(mensss)
-        # print(message_body)
-        # print(data)
-        cli, error = get_cli_con_num(number_from[1])
-        if error == None:
-            flash(f'nuevo mensaje',category='info')
-            return render_template('chat.html')
+        # mensajes_enviados = get_mensajes_WTS(number_from[1], 1)
+        # mensajes_recibidos = get_mensajes_WTS(number_from[1], 0)
+        # men = mensajes_recibidos + mensajes_enviados
+        # max_datetime = datetime.max.replace(tzinfo=pytz.UTC)
+        # mensss = sorted(men, key=lambda x: x['date_sent'] if x['date_sent'] is not None else max_datetime)
+        # cli, error = get_cli_con_num(number_from[1])
+        dat = {}
+        dat['body'] = message_body
+        dat['tel'] = number_from[1]
+        reg_mensaj_chat(dat)
+        # if error == None:
+        #     dat = {}
+        #     dat['body'] = message_body
+        #     dat['tel'] = number_from[1]
+        #     reg_mensaj_chat(dat)
+        #     # mostrar_dialog(number_from[1], message_body)
+        return redirect(url_for('bp.usuario'))
 
 
 
+@bp.route('/open_chat', methods=['POST'])
+def open_chat():
+    mostrar_dialog()
+    return redirect(url_for('bp.usuario'))
 
 
-
+def mostrar_dialog():
+    app = QApplication([])
+    main_window = CustomDialog()
+    main_window.show()
+    app.exec()
 
 
 

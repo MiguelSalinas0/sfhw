@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block title %} Usuario {% endblock %}
 {% block body %}
-    <h2>Bienvenido</h2>
+    <h2 class="pt-3">Bienvenido</h2>
     <h3>{{usuario}}</h3>
+    <form class="pt-4" action="open_chat" method="post">
+        <button class="btn btn-outline-dark" type="submit">Abrir chat</button>
+    </form>
 {% endblock %}
