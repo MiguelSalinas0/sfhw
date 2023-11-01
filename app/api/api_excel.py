@@ -1,3 +1,4 @@
+import os
 import openpyxl
 import xlrd
 import datetime
@@ -7,9 +8,16 @@ import zipfile
 from xlutils.copy import copy
 
 
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
-def generar_credixsa(datos: list, ruta_completa):
-    workbook = openpyxl.load_workbook(ruta_completa)
+fecha_actual = datetime.datetime.now()
+mes = fecha_actual.strftime("%B")
+anio = fecha_actual.year
+
+
+def generar_credixsa(datos: list):
+    archivo_excel = ""
+    workbook = openpyxl.load_workbook(archivo_excel)
     hoja = workbook.active
     claves_a_incluir = ['DNI', 'APENOM', 'Domicilio', 'LOCALIDAD', 'cp', 'prov', 'TELEFONO_CELULAR']
     fila = 3
@@ -18,7 +26,8 @@ def generar_credixsa(datos: list, ruta_completa):
             valor = dato.get(clave, '')
             hoja.cell(row=fila, column=columna, value=valor)
         fila += 1
-    workbook.save(ruta_completa)
+    nuevo_nombre = f'{mes}-{anio}-{archivo_excel}'
+    workbook.save(os.path.join('excel', nuevo_nombre))
     workbook.close()
 
 
@@ -37,17 +46,17 @@ def generar_veraz(datos: list):
             valor = dato.get(clave, '')
             hoja_escritura.write(ultima_fila, columna, valor)
         ultima_fila += 1
-    archivo_escritura.save(f'{mes}-{anio}-{archivo_excel}')
+    nuevo_nombre = f'{mes}-{anio}-{archivo_excel}'
+    archivo_escritura.save(os.path.join('excel', nuevo_nombre))
 
     # Crear un archivo ZIP y agregar el archivo de Excel
     with zipfile.ZipFile(f'{mes}-{anio}-AFECTACIONES_VERAZ.zip', 'w') as archivo_zip:
         archivo_zip.write(f'{mes}-{anio}-{archivo_excel}')
 
 
-
-
-def generar_codesa(datos: list, ruta_completa):
-    archivo_lectura = xlrd.open_workbook(ruta_completa)
+def generar_codesa(datos: list):
+    archivo_excel = ""
+    archivo_lectura = xlrd.open_workbook(archivo_excel)
     claves_a_incluir = ['APENOM', 'DNI']
     archivo_escritura = copy(archivo_lectura)
     hoja_escritura = archivo_escritura.get_sheet(0)
@@ -57,7 +66,8 @@ def generar_codesa(datos: list, ruta_completa):
             valor = dato.get(clave, '')
             hoja_escritura.write(ultima_fila, columna, valor)
         ultima_fila += 1
-    archivo_escritura.save(f'{mes}-{anio}-{archivo_excel}')
+    nuevo_nombre = f'{mes}-{anio}-{archivo_excel}'
+    archivo_escritura.save(os.path.join('excel', nuevo_nombre))
 
 
 def generar_catamarca(datos: list):
@@ -72,4 +82,5 @@ def generar_catamarca(datos: list):
             valor = dato.get(clave, '')
             hoja_escritura.write(ultima_fila, columna, valor)
         ultima_fila += 1
-    archivo_escritura.save(f'{mes}-{anio}-{archivo_excel}')
+    nuevo_nombre = f'{mes}-{anio}-{archivo_excel}'
+    archivo_escritura.save(os.path.join('excel', nuevo_nombre))

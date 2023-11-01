@@ -7,14 +7,6 @@ from app.api.api_excel import *
 from app.decorators import login_required, permission_required
 
 import json
-import datetime
-import locale
-
-locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
-
-fecha_actual = datetime.datetime.now()
-mes = fecha_actual.strftime("%B")
-anio = fecha_actual.year
 
 
 @bp.route('/list_excel')
@@ -51,17 +43,13 @@ def filtrar_reg():
 @login_required
 def procesar_exc():
     if request.method == 'POST':
-        file = request.files['file']
-        nuevo_nombre = f'{mes}-{anio}-{file.filename}'
-        file.save(os.path.join('excel', nuevo_nombre))
-        ruta_completa = os.path.join('excel', nuevo_nombre)
         listaD = [json.loads(perfil) for perfil in request.form.getlist('listaD[]')]
         if request.form['submitButton'] == 'Generar Informe Credixsa':
-            generar_credixsa(listaD, ruta_completa)
+            generar_credixsa(listaD)
         if request.form['submitButton'] == 'Generar Informe Veraz':
-            generar_veraz(listaD, ruta_completa)
+            generar_veraz(listaD)
         if request.form['submitButton'] == 'Generar Informe Codesa':
-            generar_codesa(listaD, ruta_completa)
+            generar_codesa(listaD)
         flash('Datos recibidos y procesados', category='info')
     return render_template('list_excel.html', listaD=listaD)
 
