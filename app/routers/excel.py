@@ -1,8 +1,9 @@
 import os
-from flask import render_template, request, flash
+from flask import jsonify, render_template, request, flash
 from app import bp
+import app
 from app.api.api_cliente import get_categorias
-from app.api.api_credito import get_creditos_atrasados_dias
+from app.api.api_credito import get_creditos_atrasados_dias, obtener_clientes_a_informar
 from app.api.api_excel import *
 from app.decorators import login_required, permission_required
 
@@ -25,7 +26,7 @@ def filtrar_reg():
     dias_desde = int(request.form['dias_desde'])
     dias_hasta = int(request.form['dias_hasta'])
     categorias_seleccionadas = [cat.strip() for cat in request.form.getlist('cate_checkbox')]
-    registros, error = get_creditos_atrasados_dias(dias_desde, dias_hasta)
+    registros, error = obtener_clientes_a_informar(dias_desde, dias_hasta)
     registros_filtrados = []
     categorias, error = get_categorias()
     if error == None:
@@ -52,12 +53,6 @@ def procesar_exc():
             generar_codesa(listaD)
         flash('Datos recibidos y procesados', category='info')
     return render_template('list_excel.html', listaD=listaD)
-
-
-
-
-
-
 
 
 

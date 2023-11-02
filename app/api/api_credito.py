@@ -175,3 +175,18 @@ def get_creditos_atrasados_dias(dias_desde: int, dias_hasta: int):
     for row in rows:
         data.append(cur.to_dict(row))
     return data, error
+
+def obtener_clientes_a_informar(fecha_ultimo_pago, fecha_desde, fecha_hasta):
+    error = None
+    con, cur = get_db()
+    try:
+        cur.execute('select * from GET_CLIENTES_A_INFORMAR (?,?,?)', [fecha_ultimo_pago, fecha_desde, fecha_hasta])
+        rows = cur.fetchall()
+        datos_clientes = []
+        for row in rows:
+            datos_clientes.append(cur.to_dict(row))
+    except Exception as e:
+        error = {'error': f'Error al obtener datos de clientes: {e}'}
+    finally:
+        con.close()
+    return datos_clientes, error
