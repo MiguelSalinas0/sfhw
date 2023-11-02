@@ -81,11 +81,14 @@ def get_actividades():
 def get_categorias():
     error = None
     con, cur = get_db()
-    cur.execute("select CATEGO, NOMBRE from categorias where INHA = 0")
-    rows = cur.fetchall()
     data = []
-    for row in rows:
-        data.append(cur.to_dict(row))
+    try:
+        cur.execute("select CATEGO, NOMBRE from categorias where INHA = 0")
+        rows = cur.fetchall()
+        for row in rows:
+            data.append(cur.to_dict(row))
+    except Exception as e:
+        error = {'error': f'Error al obtener las categorias: {e}'}
     return data, error
 
 

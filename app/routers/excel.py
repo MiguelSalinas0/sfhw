@@ -1,9 +1,8 @@
-import os
-from flask import jsonify, render_template, request, flash
+from datetime import timedelta
+from flask import jsonify, redirect, render_template, request, flash, url_for
 from app import bp
-import app
 from app.api.api_cliente import get_categorias
-from app.api.api_credito import get_creditos_atrasados_dias, obtener_clientes_a_informar
+from app.api.api_credito import obtener_clientes_a_informar
 from app.api.api_excel import *
 from app.decorators import login_required, permission_required
 
@@ -23,12 +22,21 @@ def list_excel():
 # @permission_required('sistema')
 @login_required
 def filtrar_reg():
-    dias_desde = int(request.form['dias_desde'])
-    dias_hasta = int(request.form['dias_hasta'])
+
+    fecha_actual = datetime.datetime.now()
+    dias_desde = float(request.form['dias_desde'])
+    fecha_desde = fecha_actual - timedelta(days=4 * 365)
+    dias_hasta = float(request.form['dias_hasta'])
+    fecha_hasta = fecha_actual - timedelta(days=dias_hasta)
+
     categorias_seleccionadas = [cat.strip() for cat in request.form.getlist('cate_checkbox')]
-    registros, error = obtener_clientes_a_informar(dias_desde, dias_hasta)
+    registros, error = obtener_clientes_a_informar(fecha_actual, fecha_desde, fecha_actual)
+    print(registros)
+
+
     registros_filtrados = []
     categorias, error = get_categorias()
+    print(categorias)
     if error == None:
         if categorias_seleccionadas != []:
             for reg in registros:
@@ -37,6 +45,9 @@ def filtrar_reg():
             return render_template('list_excel.html', listaD=registros_filtrados, categorias=categorias, bandera=True)
         else:
             return render_template('list_excel.html', listaD=registros, categorias=categorias, bandera=True)
+    else:
+        flash(f'Ocurrio algún error {error}', category='error')
+        return redirect(url_for('bp.list_excel'))
 
 
 @bp.route('/procesar_exc', methods=['POST'])
