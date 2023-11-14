@@ -9,7 +9,7 @@ import re
 # twilio_phone_number = '+17853902449'
 
 account_sid = 'AC084d9e999a6ae67e6f28471ff580f0f4'
-auth_token = '024c7ffb5e04fbd032d0c06bdbb112f6'
+auth_token = '94dfff0a6e55a61703a5fd54b6c9ca46'
 twilio_phone_number = '+14155238886'
 expresion_regular = r'^\+549\d{10}$'
 client = Client(account_sid, auth_token)
@@ -335,12 +335,3 @@ def get_one_mensaj(id: int):
         error = {'error': f'No hay datos de mensaje para ID: {id}'}
         return {}, error
     return cur.to_dict(row), error
-
-
-
-
-
-
-def metodo_opcion1():
-    return 'metodo ejecutado'
-

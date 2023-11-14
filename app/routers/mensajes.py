@@ -1,7 +1,6 @@
-from flask import redirect, render_template, request, flash, url_for
+from flask import jsonify, redirect, render_template, request, flash, url_for
 import pytz
 from app import bp
-from app.api.api_chat import CustomDialog
 from app.api.api_cliente import *
 from app.api.api_credito import *
 from app.api.api_mensajes import *
@@ -155,19 +154,66 @@ def webhook():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @bp.route('/open_chat', methods=['POST'])
 def open_chat():
-    mostrar_dialog()
-    return redirect(url_for('bp.usuario'))
+    return render_template('chat.html')
 
 
-def mostrar_dialog():
-    app = QApplication([])
-    main_window = CustomDialog()
-    main_window.show()
-    app.exec()
+@bp.route('/obtener_datos', methods=['GET'])
+def obtener_datos():
+    mensajes, error = get_mensaj_chat()
+    if error is None:
+        for mensaje in mensajes:
+            cliente, errorC = get_cli_con_num(mensaje.get('N_TEL'))
+            if errorC is None:
+                mensaje['AYN'] = cliente.get('APELLIDO') + ', ' + cliente.get('NOMBRE')
+            else:
+                mensaje['AYN'] = ''
+            mensaje['FECHA'] = mensaje['FECHA'].isoformat()
+            mensaje['HORA'] = mensaje['HORA'].isoformat()
+        return jsonify(mensajes)
 
 
+@bp.route('/marcar_leido', methods=['POST'])
+def marcar_leido():
+    if request.method == 'POST':
+        id_ms = request.form.get('id_ms')
+        error = update_mensaj_chat(int(id_ms))
+        if error == None:
+            return jsonify(True)
+
+
+@bp.route('/procesar_formulario', methods=['POST'])
+def procesar_formulario():
+    if request.method == 'POST':
+        respuesta = request.form.get('respuesta')
+        n_telefono = request.form.get('n_telefono')
+        id_ms = request.form.get('id_ms')
+    idm, status = enviarWTS(respuesta, n_telefono)
+    response = {
+        'respuesta': respuesta,
+        'n_telefono': n_telefono,
+        "id_ms": id_ms
+    }
+    print(response)
 
 
 

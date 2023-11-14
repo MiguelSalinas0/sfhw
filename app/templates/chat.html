@@ -1,119 +1,93 @@
-{% extends './layout.html' %}
+{% extends 'layout.html' %}
 {% block title %} Chat {% endblock %}
 
 {% block body %}
 
-<div class="container">
-    <div class="row clearfix">
-        <div class="col-lg-12">
-            <div class="card chat-app">
-                <div id="plist" class="people-list">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </div>
-                    <ul class="list-unstyled chat-list mt-2 mb-0">
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Vincent Porter</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
-                            </div>
-                        </li>
-                        <li class="clearfix active">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Aiden Chavez</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Mike Thomas</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>                                    
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Christian Kelly</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Monica Ward</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Dean Henry</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="chat">
-                    <div class="chat-header clearfix">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                                </a>
-                                <div class="chat-about">
-                                    <h6 class="m-b-0">Aiden Chavez</h6>
-                                    <small>Last seen: 2 hours ago</small>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 hidden-sm text-right">
-                                <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-history">
-                        <ul class="m-b-0">
-                            <li class="clearfix">
-                                <div class="message-data text-right">
-                                    <span class="message-data-time">10:10 AM, Today</span>
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                                </div>
-                                <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                            </li>
-                            <li class="clearfix">
-                                <div class="message-data">
-                                    <span class="message-data-time">10:12 AM, Today</span>
-                                </div>
-                                <div class="message my-message">Are we meeting today?</div>                                    
-                            </li>                               
-                            <li class="clearfix">
-                                <div class="message-data">
-                                    <span class="message-data-time">10:15 AM, Today</span>
-                                </div>
-                                <div class="message my-message">Project has been already finished and I have results to show you.</div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="chat-message clearfix">
-                        <div class="input-group mb-0">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fa fa-send"></i></span>
-                            </div>
-                            <input type="text" class="form-control" placeholder="Enter text here...">                                    
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div style="display: flex; justify-content: space-evenly; padding-top: 30px;">
+    <div id="datos_div">
+        <!-- Aquí se mostrarán los datos -->
+    </div>
+
+    <div id="seleccionados_div">
+        <div id="formulario">
+            <form id="miFormulario" method="POST" action="/procesar_formulario"
+                style="display: flex; flex-direction: column; width: 500px;">
+                <input class="form-control" type="text" name="n_telefono" id="n_telefono" disabled>
+                <input type="hidden" name="id_m" id="id_m" disabled>
+                <textarea style="resize: none;" class="my-3 form-control" name="body" id="body" cols="30" rows="10"
+                    disabled></textarea>
+                <textarea class="form-control mb-3" style="resize: none;" placeholder="Respuesta" name="respuesta"
+                    id="respuesta" cols="30" rows="7"></textarea>
+                <input type="submit" value="Responder" class="btn btn-outline-success">
+            </form>
         </div>
     </div>
-    </div>
-<h6>Esta es la pagina de chat</h6>
+</div>
+
+<script>
+    function actualizarDatos() {
+        $.ajax({
+            url: '/obtener_datos',
+            type: 'GET',
+            success: function (data) {
+                $('#datos_div').html('');
+                // Iterar sobre la lista de diccionarios
+                data.forEach(function (item, index) {
+                    // Crear elementos seleccionables con un atributo "data-clave1" para almacenar el valor
+                    var elemento = $('<div style="margin-bottom: 15px; cursor: pointer" class="seleccionable" data-nt="' + item.N_TEL + '" data-idm="' + item.ID + '" data-body="' + item.BODY + '">' + item.N_TEL + ' - ' + item.AYN + '</div>');
+                    $('#datos_div').append(elemento);
+                });
+            }
+        });
+    }
+
+    // Manejar clic en elementos seleccionables
+    $('#datos_div').on('click', '.seleccionable', function () {
+        var valor = $(this).data('nt');
+        var valor_id = $(this).data('idm');
+        var body = $(this).data('body');
+
+        // Establecer el valor en el input oculto
+        $('#n_telefono').val(valor);
+        $('#id_m').val(valor_id);
+        $('#body').val(body);
+
+        $.ajax({
+            url: '/marcar_leido',
+            type: 'POST',
+            data: {
+                id_ms: valor_id
+            },
+            success: function (response) {
+                if (response === true) {
+                    actualizarDatos()
+                }
+            }
+        });
+    });
+
+    // Actualizar los datos al cargar la página
+    actualizarDatos();
+
+    // Actualizar los datos cada minuto 60000
+    setInterval(actualizarDatos, 60000);
+
+    // Manejar el envío del formulario
+    $('#miFormulario').submit(function (event) {
+        event.preventDefault();
+        // Realizar una solicitud AJAX para enviar los datos del formulario a un método de Flask
+        $.ajax({
+            url: '/procesar_formulario',
+            type: 'POST',
+            data: {
+                respuesta: $('#respuesta').val(),
+                n_telefono: $('#n_telefono').val(),
+                id_ms: $('#id_m').val(),
+            },
+            success: function (response) {
+            }
+        });
+    });
+</script>
+
 {% endblock %}

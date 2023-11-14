@@ -7,12 +7,12 @@
         <div class="justify-content-start row my-2">
             <div class="d-flex align-items-center justify-content-evenly">
                 <div class="d-flex align-items-center col-3">
-                    <label class="col-3" for="dias_desde">Días desde</label>
-                    <input class="form-control" type="number" name="dias_desde" id="dias_desde" required>
+                    <label class="col-3" for="dias_desde">Fecha desde</label>
+                    <input class="form-control" type="date" name="date_desde" id="date_desde">
                 </div>
                 <div class="d-flex align-items-center mx-5 col-3">
-                    <label class="col-3" for="dias_hasta">Días hasta</label>
-                    <input class="form-control" type="number" name="dias_hasta" id="dias_hasta" required>
+                    <label class="col-3" for="dias_hasta">Fecha hasta</label>
+                    <input class="form-control" type="date" name="date_hasta" id="date_hasta" required>
                 </div>
                 <div class="dropdown d-flex justify-content-center" aria-multiselectable="true">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -21,7 +21,7 @@
                     <div class="dropdown-content mt-4">
                         {% for cate in categorias %}
                         <label class="d-flex align-items-center">
-                            <input type="checkbox" name="cate_checkbox" value="{{cate.NOMBRE}}">{{cate.NOMBRE}}
+                            <input type="checkbox" name="cate_checkbox" value="{{cate.CATEGO}}">{{cate.NOMBRE}}
                         </label>
                         {% endfor %}
                     </div>
@@ -36,7 +36,7 @@
 
 
 <div class="pt-5">
-    <form method="POST" action="/procesar_exc" enctype="multipart/form-data">
+    <form method="POST" action="/procesar_exc">
         <table class="table">
             <thead>
                 <tr>
@@ -51,7 +51,7 @@
                 <input type="hidden" name="listaD[]" value='{{ dato | tojson }}'>
                 <tr>
                     <td>{{dato.CLIEN}}</td>
-                    <td>{{dato.APENOM}}</td>
+                    <td>{{dato.APELLIDO}}, {{dato.NOMBRE}}</td>
                     <td>{{dato.LOCALIDAD}}</td>
                     <td>{{dato.CATEGORIA}}</td>
                 </tr>

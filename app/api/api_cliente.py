@@ -175,7 +175,7 @@ def get_cli_con_num(numero: str):
     numero = numero[7:]
     error = None
     con, cur = get_db()
-    cur.execute("SELECT * FROM CLIENTES c WHERE (TRIM(c.CODAREA) LIKE ? and TRIM(c.TELEFONO) = ?)", (codigo_area, numero,))
+    cur.execute("SELECT * FROM CLIENTES c WHERE (TRIM(c.CODAREA) LIKE ? and TRIM(c.TELEFONO) LIKE ?)", (codigo_area, numero,))
     row = cur.fetchone()
     if row == None:
         error = {'error': f'No hay datos de cliente para el número: {numero}'}
